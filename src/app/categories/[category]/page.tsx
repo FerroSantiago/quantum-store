@@ -1,4 +1,3 @@
-// app/categories/[category]/page.tsx
 import { notFound } from 'next/navigation'
 import ProductCard from '@/components/ProductCard'
 import { getProductsByCategory } from '@/lib/actions'
