@@ -20,26 +20,26 @@ interface ProductCardProps {
 
 export default function ProductCard({ name, image, price, href, featured }: ProductCardProps) {
   return (
-    <Link href={href} className="block w-fit mx-auto">
-      <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+    <Link href={href} className="block w-full">
+      <Card className="overflow-hidden transition-shadow hover:shadow-lg h-full">
         <CardContent className="p-0">
-          <div className="aspect-square relative w-[300px] h-[300px]">
+          <div className="aspect-square relative w-full">
             <Image
               src={image}
               alt={name}
               fill
               className="object-cover"
-              sizes="300px"
+              sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             />
           </div>
           <div className="p-4">
             <div className="flex items-center gap-2">
-              <h3 className="font-medium">{name}</h3>
+              <h3 className="font-medium line-clamp-1">{name}</h3>
               {featured && (
                 <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Producto favorito de los clientes</p>
