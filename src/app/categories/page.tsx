@@ -1,4 +1,3 @@
-// app/categories/page.tsx
 import Link from 'next/link'
 import { categories } from '@/lib/data'
 

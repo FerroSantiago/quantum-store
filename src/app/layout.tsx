@@ -1,8 +1,9 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
-import { CartProvider } from '@/contexts/CartContext'
+import BreadcrumbNav from '@/components/BreadCrumbNav'
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { CartProvider } from '@/contexts/CartContext'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -24,6 +25,9 @@ export default function RootLayout({
           <CartProvider>
             <Header />
             <main className="min-h-screen bg-background">
+              <div className="container mx-auto px-4 pt-4">
+                <BreadcrumbNav />
+              </div>
               {children}
             </main>
             <Toaster />
