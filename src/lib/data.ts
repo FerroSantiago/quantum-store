@@ -106,5 +106,105 @@ export const products: Product[] = [
     category: 'cosmeticos',
     categoryName: 'Cosméticos',
     featured: false
+  },
+  {
+    id: '11',
+    name: 'Base de Maquillaje Premium',
+    price: 79.99,
+    description: 'Base de larga duración con protección solar.',
+    image: 'https://placehold.co/300x300',
+    category: 'cosmeticos',
+    categoryName: 'Cosméticos',
+    featured: true
+  },
+  {
+    id: '12',
+    name: 'Termómetro Infrarrojo',
+    price: 129.99,
+    description: 'Termómetro digital sin contacto de alta precisión.',
+    image: 'https://placehold.co/300x300',
+    category: 'salud',
+    categoryName: 'Salud',
+    featured: true
+  },
+  {
+    id: '13',
+    name: 'Robot Aspiradora',
+    price: 299.99,
+    description: 'Aspiradora inteligente con mapeo y control por app.',
+    image: 'https://placehold.co/300x300',
+    category: 'casa',
+    categoryName: 'Casa',
+    featured: true
+  },
+  {
+    id: '14',
+    name: 'Labial Mate 24h',
+    price: 34.99,
+    description: 'Labial de larga duración con acabado mate.',
+    image: 'https://placehold.co/300x300',
+    category: 'cosmeticos',
+    categoryName: 'Cosméticos',
+    featured: false
+  },
+  {
+    id: '15',
+    name: 'Báscula Inteligente',
+    price: 69.99,
+    description: 'Báscula con medición de masa corporal y app.',
+    image: 'https://placehold.co/300x300',
+    category: 'salud',
+    categoryName: 'Salud',
+    featured: true
+  },
+  {
+    id: '16',
+    name: 'Organizador Multiusos',
+    price: 44.99,
+    description: 'Organizador modular para cualquier espacio.',
+    image: 'https://placehold.co/300x300',
+    category: 'casa',
+    categoryName: 'Casa',
+    featured: false
+  },
+  {
+    id: '17',
+    name: 'Kit de Brochas',
+    price: 89.99,
+    description: 'Set profesional de brochas para maquillaje.',
+    image: 'https://placehold.co/300x300',
+    category: 'cosmeticos',
+    categoryName: 'Cosméticos',
+    featured: true
+  },
+  {
+    id: '18',
+    name: 'Purificador de Aire',
+    price: 249.99,
+    description: 'Purificador con filtro HEPA y monitor de calidad.',
+    image: 'https://placehold.co/300x300',
+    category: 'salud',
+    categoryName: 'Salud',
+    featured: true
+  },
+  {
+    id: '19',
+    name: 'Difusor Aromático',
+    price: 59.99,
+    description: 'Difusor ultrasónico con luces LED.',
+    image: 'https://placehold.co/300x300',
+    category: 'casa',
+    categoryName: 'Casa',
+    featured: true
+  },
+  {
+    id: '20',
+    name: 'Paleta de Sombras',
+    price: 54.99,
+    description: 'Paleta con 18 tonos mate y metálicos.',
+    image: 'https://placehold.co/300x300',
+    category: 'cosmeticos',
+    categoryName: 'Cosméticos',
+    featured: false
   }
 ]
