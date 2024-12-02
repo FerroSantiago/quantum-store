@@ -12,8 +12,8 @@ interface PageProps {
   }
 }
 
-export default function ProductPage({ params }: PageProps) {
-  const product = getProduct(params.category, params.id)
+export default async function ProductPage({ params }: PageProps) {
+  const product = await getProduct(params.category, params.id)
 
   if (!product) {
     notFound()
@@ -31,22 +31,23 @@ export default function ProductPage({ params }: PageProps) {
                 fill
                 className="object-cover rounded-lg"
                 sizes="300px"
+                priority
               />
             </div>
             <div className="flex flex-col">
-            <div>
-              <p className="text-sm text-gray-500 mb-2">{product.categoryName}</p>
-              <div className="flex items-center gap-2 mb-4">
-                <h1 className="text-3xl font-bold">{product.name}</h1>
-                {product.featured && (
-                  <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                )}
+              <div>
+                <p className="text-sm text-gray-500 mb-2">{product.categoryName}</p>
+                <div className="flex items-center gap-2 mb-4">
+                  <h1 className="text-3xl font-bold">{product.name}</h1>
+                  {product.featured && (
+                    <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                  )}
+                </div>
+                <p className="text-2xl font-bold text-primary mb-4">
+                  ${product.price.toFixed(2)}
+                </p>
+                <p className="text-gray-600">{product.description}</p>
               </div>
-              <p className="text-2xl font-bold text-primary mb-4">
-                ${product.price.toFixed(2)}
-              </p>
-              <p className="text-gray-600">{product.description}</p>
-            </div>
               <div className="flex justify-end mt-6">
                 <AddToCartButton product={product} />
               </div>

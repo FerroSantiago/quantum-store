@@ -8,11 +8,15 @@ import { Card } from '@/components/ui/card'
 export default function SearchResults() {
   const { searchResults, isSearching, searchQuery } = useSearch()
 
-  if (!isSearching) return null
+  if (!searchQuery) return null
 
   return (
     <div className="absolute top-full left-0 right-0 bg-background border rounded-md mt-1 shadow-lg max-h-[70vh] overflow-y-auto z-50">
-      {searchResults.length > 0 ? (
+      {isSearching ? (
+        <div className="p-4 text-center text-muted-foreground">
+          Buscando...
+        </div>
+      ) : searchResults.length > 0 ? (
         <div className="p-2">
           <p className="text-sm text-muted-foreground px-2 py-1">
             {searchResults.length} resultados para &quot;{searchQuery}&quot;

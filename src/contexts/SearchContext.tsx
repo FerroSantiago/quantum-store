@@ -1,8 +1,7 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react'
 import { Product } from '@/lib/types'
-import { getProducts } from '@/lib/actions'
 
 interface SearchContextType {
   searchQuery: string
@@ -17,21 +16,53 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined)
 
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Product[]>([])
   const [showMobileSearch, setShowMobileSearch] = useState(false)
-  const allProducts = getProducts()
+  const [isSearching, setIsSearching] = useState(false)
 
-  const searchResults = searchQuery ? allProducts.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.categoryName.toLowerCase().includes(searchQuery.toLowerCase())
-  ) : []
+  const fetchResults = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      const data = await response.json()
+      setSearchResults(data.products || [])
+    } catch (error) {
+      console.error('Error searching products:', error)
+      setSearchResults([])
+    } finally {
+      setIsSearching(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchResults(searchQuery)
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery, fetchResults])
+
+  // Limpiar resultados cuando se cierra la búsqueda móvil
+  useEffect(() => {
+    if (!showMobileSearch) {
+      setSearchQuery('')
+    }
+  }, [showMobileSearch])
 
   return (
     <SearchContext.Provider value={{
       searchQuery,
       setSearchQuery,
       searchResults,
-      isSearching: searchQuery.length > 0,
+      isSearching,
       showMobileSearch,
       setShowMobileSearch
     }}>

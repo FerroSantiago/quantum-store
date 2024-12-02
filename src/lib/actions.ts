@@ -1,20 +1,45 @@
+'use server'
+
+import { prisma } from './prisma'
 import { Product } from './types'
-import { products } from './data'
 
-export function getProducts(): Product[] {
-  return products
+export async function getProducts(): Promise<Product[]> {
+  return prisma.product.findMany({
+    orderBy: {
+      name: 'asc'
+    }
+  })
 }
 
-export function getProductsByCategory(category: string): Product[] {
-  return products.filter(product => product.category === category)
+export async function getProductsByCategory(category: string): Promise<Product[]> {
+  return prisma.product.findMany({
+    where: {
+      category: category
+    },
+    orderBy: {
+      name: 'asc'
+    }
+  })
 }
 
-export function getProduct(category: string, id: string): Product | undefined {
-  return products.find(
-    product => product.category === category && product.id === id
-  )
+export async function getProduct(category: string, id: string): Promise<Product | null> {
+  return prisma.product.findFirst({
+    where: {
+      AND: [
+        { category: category },
+        { id: id }
+      ]
+    }
+  })
 }
 
-export function getFeaturedProducts(): Product[] {
-  return products.filter(product => product.featured)
+export async function getFeaturedProducts(): Promise<Product[]> {
+  return prisma.product.findMany({
+    where: {
+      featured: true
+    },
+    orderBy: {
+      name: 'asc'
+    }
+  })
 }
