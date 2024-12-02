@@ -16,7 +16,8 @@ export default function Header() {
     searchQuery, 
     setSearchQuery, 
     showMobileSearch, 
-    setShowMobileSearch 
+    setShowMobileSearch,
+    setShowResults
   } = useSearch()
   
   const totalItems = getTotalItems()
@@ -43,6 +44,7 @@ export default function Header() {
               className="w-full pl-4 pr-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setShowResults(true)}
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <SearchResults />

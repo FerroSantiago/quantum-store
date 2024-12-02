@@ -12,6 +12,19 @@ interface SearchContextType {
   setShowMobileSearch: (show: boolean) => void
 }
 
+
+interface SearchContextType {
+  searchQuery: string
+  setSearchQuery: (query: string) => void
+  searchResults: Product[]
+  isSearching: boolean
+  showMobileSearch: boolean
+  setShowMobileSearch: (show: boolean) => void
+  showResults: boolean
+  setShowResults: (show: boolean) => void
+  clearSearch: () => void
+}
+
 const SearchContext = createContext<SearchContextType | undefined>(undefined)
 
 export function SearchProvider({ children }: { children: ReactNode }) {
@@ -19,6 +32,13 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   const [searchResults, setSearchResults] = useState<Product[]>([])
   const [showMobileSearch, setShowMobileSearch] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
+  const [showResults, setShowResults] = useState(false)
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('')
+    setSearchResults([])
+    setShowResults(false)
+  }, [])
 
   const fetchResults = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -34,6 +54,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       }
       const data = await response.json()
       setSearchResults(data.products || [])
+      setShowResults(true)
     } catch (error) {
       console.error('Error searching products:', error)
       setSearchResults([])
@@ -50,12 +71,11 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(timeoutId)
   }, [searchQuery, fetchResults])
 
-  // Limpiar resultados cuando se cierra la búsqueda móvil
   useEffect(() => {
     if (!showMobileSearch) {
-      setSearchQuery('')
+      clearSearch()
     }
-  }, [showMobileSearch])
+  }, [showMobileSearch, clearSearch])
 
   return (
     <SearchContext.Provider value={{
@@ -64,7 +84,10 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       searchResults,
       isSearching,
       showMobileSearch,
-      setShowMobileSearch
+      setShowMobileSearch,
+      showResults,
+      setShowResults,
+      clearSearch
     }}>
       {children}
     </SearchContext.Provider>
