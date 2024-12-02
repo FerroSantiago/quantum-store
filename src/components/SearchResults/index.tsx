@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useSearch } from '@/contexts/SearchContext'
 import { Card } from '@/components/ui/card'
+import { slugify } from '@/lib/utils'
 
 export default function SearchResults() {
   const { searchResults, isSearching, searchQuery } = useSearch()
@@ -24,10 +25,10 @@ export default function SearchResults() {
           <div className="space-y-2">
             {searchResults.map((product) => (
               <Link 
-                key={product.id} 
-                href={`/categories/${product.category}/${product.id}`}
-                className="block"
-              >
+              key={product.id} 
+              href={`/categories/${product.category}/${slugify(product.name)}-${product.id}`}
+              className="block"
+            >
                 <Card className="hover:bg-accent/50 transition-colors">
                   <div className="flex items-center gap-3 p-2">
                     <div className="relative w-12 h-12 shrink-0">

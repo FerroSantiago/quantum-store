@@ -8,19 +8,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Star } from 'lucide-react'
+import { slugify } from '@/lib/utils'
 
 interface ProductCardProps {
   id: string
   name: string
   image: string
   price: number
-  href: string
+  category: string
   featured?: boolean
 }
 
-export default function ProductCard({ name, image, price, href, featured }: ProductCardProps) {
+export default function ProductCard({ name, image, price, category, id, featured }: ProductCardProps) {
+  // Solo usamos el nombre del producto para la parte legible del slug
+  const slug = `${slugify(name)}-${id}`
+
   return (
-    <Link href={href} className="block w-full">
+    <Link href={`/categories/${category}/${slug}`} className="block w-full">
       <Card className="overflow-hidden transition-shadow hover:shadow-lg h-full">
         <CardContent className="p-0">
           <div className="aspect-square relative w-full">
@@ -37,15 +41,15 @@ export default function ProductCard({ name, image, price, href, featured }: Prod
               <h3 className="font-medium line-clamp-1">{name}</h3>
               {featured && (
                 <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Producto favorito de los clientes</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Producto favorito de los clientes</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
             <p className="mt-1 text-primary font-bold">

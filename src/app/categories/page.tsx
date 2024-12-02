@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { categories } from 'prisma/data'
+import { categories } from '@/lib/constants'
 
 export default function CategoriesPage() {
   return (
