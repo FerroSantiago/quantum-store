@@ -6,30 +6,29 @@ import AddToCartButton from '@/components/AddToCartButton'
 import { getProduct } from '@/lib/actions'
 import { extractIdFromSlug } from '@/lib/utils'
 
-type PageProps = {
+interface PageProps {
   params: Promise<{
     category: string;
     slug: string;
   }>;
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function ProductPage(props: PageProps) {
-  const params = await props.params
-  
+  const { category, slug } = await props.params;
+
   try {
-    const id = extractIdFromSlug(params.slug)
+    const id = extractIdFromSlug(slug)
     if (!id) {
       console.error('ID no encontrado en el slug')
       notFound()
     }
 
-    const product = await getProduct(params.category, id)
+    const product = await getProduct(category, id)
     if (!product) {
       console.error('Producto no encontrado')
       notFound()
     }
-
     return (
       <div className="container mx-auto px-4 py-12">
         <Card className="max-w-4xl mx-auto">

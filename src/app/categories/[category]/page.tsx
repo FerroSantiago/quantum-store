@@ -4,45 +4,46 @@ import CategoryClient from './CategoryClient'
 import { categories } from '@/lib/constants'
 import { Metadata } from 'next'
 
-type PageProps = {
+interface PageProps {
   params: Promise<{
     category: string;
   }>;
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 interface MetadataProps {
-  params: Promise<{ category: string }>;
+  params: Promise<{
+    category: string;
+  }>;
 }
 
 export async function generateMetadata(
   { params }: MetadataProps
 ): Promise<Metadata> {
-  const resolvedParams = await params
-  const category = categories.find(cat => cat.id === resolvedParams.category)
+  const { category } = await params;
+  const categoryData = categories.find(cat => cat.id === category)
   
-  if (!category) {
+  if (!categoryData) {
     return {
       title: 'Categoría no encontrada'
     }
   }
 
   return {
-    title: `${category.name} | Quantum Store`,
-    description: `Explora nuestra colección de ${category.name}`
+    title: `${categoryData.name} | Quantum Store`,
+    description: `Explora nuestra colección de ${categoryData.name}`
   }
 }
 
 export default async function CategoryPage(props: PageProps) {
-  const params = await props.params
+  const { category } = await props.params;
   
-  // Verificar que la categoría existe
-  const category = categories.find(cat => cat.id === params.category)
-  if (!category) {
+  const categoryData = categories.find(cat => cat.id === category)
+  if (!categoryData) {
     notFound()
   }
 
-  const products = await getProductsByCategory(params.category)
+  const products = await getProductsByCategory(category)
 
-  return <CategoryClient initialProducts={products} category={params.category} />
+  return <CategoryClient initialProducts={products} category={category} />
 }
