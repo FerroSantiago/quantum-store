@@ -10,6 +10,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ products: [] })
     }
 
+    await prisma.$connect()
+
     const products = await prisma.product.findMany({
       where: {
         OR: [
@@ -23,9 +25,15 @@ export async function GET(request: Request) {
       }
     })
 
+    await prisma.$disconnect()
     return NextResponse.json({ products })
   } catch (error) {
     console.error('Search error:', error)
-    return NextResponse.json({ products: [] }, { status: 500 })
+    try {
+      await prisma.$disconnect()
+    } catch (e) {
+      console.error('Error disconnecting from database:', e)
+    }
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
