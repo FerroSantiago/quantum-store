@@ -9,31 +9,47 @@ import {
 } from "@/components/ui/tooltip"
 import { Star } from 'lucide-react'
 import { slugify } from '@/lib/utils'
+import { Product } from '@/lib/types'
+import { useState } from 'react'
 
-interface ProductCardProps {
-  id: string
-  name: string
-  image: string
-  price: number
-  category: string
-  featured?: boolean
-}
+type ProductCardProps = Omit<Product, 'orderItems' | 'createdAt' | 'updatedAt'>
 
-export default function ProductCard({ name, image, price, category, id, featured }: ProductCardProps) {
-  // Solo usamos el nombre del producto para la parte legible del slug
+export default function ProductCard({ 
+  id, 
+  name, 
+  image, 
+  price, 
+  category, 
+  featured 
+}: ProductCardProps) {
+  const [isLoading, setIsLoading] = useState(true)
   const slug = `${slugify(name)}-${id}`
+  const href = `/categories/${category}/${slug}`
 
   return (
-    <Link href={`/categories/${category}/${slug}`} className="block w-full">
+    <Link href={href} className="block w-full">
       <Card className="overflow-hidden transition-shadow hover:shadow-lg h-full">
         <CardContent className="p-0">
-          <div className="aspect-square relative w-full">
+          <div className="aspect-square relative w-full bg-gray-100">
             <Image
               src={image}
               alt={name}
               fill
-              className="object-cover"
-              sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+              className={`
+                object-cover duration-700 ease-in-out
+                ${isLoading 
+                  ? 'scale-110 blur-2xl grayscale'
+                  : 'scale-100 blur-0 grayscale-0'
+                }
+              `}
+              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+              priority={false}
+              onLoad={(event) => {
+                const img = event.target as HTMLImageElement
+                if (img.src.indexOf('data:image') < 0) {
+                  setIsLoading(false)
+                }
+              }}
             />
           </div>
           <div className="p-4">

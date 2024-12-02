@@ -11,10 +11,15 @@ type PageProps = {
   searchParams: Record<string, string | string[] | undefined>;
 }
 
-export async function generateMetadata({ params }: { 
-  params: { category: string } 
-}): Promise<Metadata> {
-  const category = categories.find(cat => cat.id === params.category)
+interface MetadataProps {
+  params: Promise<{ category: string }>;
+}
+
+export async function generateMetadata(
+  { params }: MetadataProps
+): Promise<Metadata> {
+  const resolvedParams = await params
+  const category = categories.find(cat => cat.id === resolvedParams.category)
   
   if (!category) {
     return {
@@ -24,15 +29,16 @@ export async function generateMetadata({ params }: {
 
   return {
     title: `${category.name} | Quantum Store`,
-    description: `Explora nuestra colección de ${category.name}`,
+    description: `Explora nuestra colección de ${category.name}`
   }
 }
 
 export default async function CategoryPage(props: PageProps) {
   const params = await props.params
-  const categoryExists = categories.some(cat => cat.id === params.category)
   
-  if (!categoryExists) {
+  // Verificar que la categoría existe
+  const category = categories.find(cat => cat.id === params.category)
+  if (!category) {
     notFound()
   }
 
