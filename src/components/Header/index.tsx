@@ -1,16 +1,20 @@
+// /components/Header/index.tsx
 'use client'
 
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { FeaturedFilterButton } from '../ui/featuredFilterButton'
-import { ShoppingCart, Search, X } from 'lucide-react'
+import { ShoppingCart, Search, X, LogIn, LogOut, UserCircle } from 'lucide-react'
 import Navigation from './Navigation'
 import SearchResults from '../SearchResults'
 import { useCart } from '@/contexts/CartContext'
 import { useSearch } from '@/contexts/SearchContext'
+import { useSession, signOut } from 'next-auth/react'
+import { MobileDrawer } from '../MobileDrawer'
 
 export default function Header() {
+  const { data: session, status } = useSession()
   const { getTotalItems } = useCart()
   const { 
     searchQuery, 
@@ -22,10 +26,13 @@ export default function Header() {
   
   const totalItems = getTotalItems()
 
-  // Cerrar búsqueda móvil al cambiar de ruta
   useEffect(() => {
     return () => setShowMobileSearch(false)
   }, [setShowMobileSearch])
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: true, callbackUrl: '/' })
+  }
 
   return (
     <header className="border-b sticky top-0 bg-background z-50">
@@ -68,8 +75,39 @@ export default function Header() {
               >
                 <Search className="h-5 w-5" />
               </FeaturedFilterButton>
-              <div className="ml-auto relative">
-                <Link href="/cart">
+              
+              <div className="ml-auto flex items-center gap-4">
+                {/* Sesión - Solo visible en desktop */}
+                <div className="hidden sm:flex items-center gap-4">
+                  {status === 'authenticated' ? (
+                    <>
+                      <Link 
+                        href="/profile"
+                        className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                      >
+                        <UserCircle className="h-5 w-5" />
+                        <span>{session.user?.name || session.user?.email}</span>
+                      </Link>
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                      >
+                        <LogOut className="h-5 w-5" />
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </>
+                  ) : (
+                    <Link 
+                      href="/auth/login"
+                      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                    >
+                      <LogIn className="h-5 w-5" />
+                      <span>Iniciar Sesión</span>
+                    </Link>
+                  )}
+                </div>
+                
+                <Link href="/cart" className="relative">
                   <ShoppingCart className="h-6 w-6" />
                   {totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 bg-black text-white text-xs font-medium rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
@@ -77,12 +115,17 @@ export default function Header() {
                     </span>
                   )}
                 </Link>
+
+                {/* Menú móvil */}
+                <MobileDrawer />
               </div>
             </>
           )}
         </div>
       </div>
-      {!showMobileSearch && <Navigation />}
+      <div className="hidden sm:block">
+        <Navigation variant="horizontal" />
+      </div>
     </header>
   )
 }
