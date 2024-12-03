@@ -1,13 +1,16 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
+import { useSession } from 'next-auth/react'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Star } from 'lucide-react'
+import { Star, Eye, DollarSign } from 'lucide-react'
 import { slugify } from '@/lib/utils'
 import { Product } from '@/lib/types'
 import { useState } from 'react'
@@ -22,14 +25,15 @@ export default function ProductCard({
   category, 
   featured 
 }: ProductCardProps) {
+  const { status } = useSession()
   const [isLoading, setIsLoading] = useState(true)
   const slug = `${slugify(name)}-${id}`
   const href = `/categories/${category}/${slug}`
 
   return (
-    <Link href={href} className="block w-full">
-      <Card className="overflow-hidden transition-shadow hover:shadow-lg h-full">
-        <CardContent className="p-0">
+    <Card className="overflow-hidden transition-shadow hover:shadow-lg h-full">
+      <CardContent className="p-0">
+        <Link href={href} className="block">
           <div className="aspect-square relative w-full bg-gray-100">
             <Image
               src={image}
@@ -52,7 +56,9 @@ export default function ProductCard({
               }}
             />
           </div>
-          <div className="p-4">
+        </Link>
+        <div className="p-4">
+          <Link href={href} className="block">
             <div className="flex items-center gap-2">
               <h3 className="font-medium line-clamp-1">{name}</h3>
               {featured && (
@@ -68,12 +74,33 @@ export default function ProductCard({
                 </TooltipProvider>
               )}
             </div>
-            <p className="mt-1 text-primary font-bold">
-              ${price.toFixed(2)}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+          </Link>
+          {status === 'authenticated' ? (
+            <Link href={href}>
+              <p className="mt-1 text-primary font-bold">
+                ${price.toFixed(2)}
+              </p>
+            </Link>
+          ) : (
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Link 
+                    href="/auth/login"
+                    className="mt-1 inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <DollarSign className="h-4 w-4" />
+                    <Eye className="h-4 w-4" style={{ textDecoration: 'line-through' }} />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Solo clientes pueden ver el precio</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   )
 }

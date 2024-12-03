@@ -1,74 +1,39 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import { Star } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import AddToCartButton from '@/components/AddToCartButton'
 import { getProduct } from '@/lib/actions'
 import { extractIdFromSlug } from '@/lib/utils'
+import ProductView from './ProductView'
+import { Suspense } from 'react'
 
 interface PageProps {
-  params: Promise<{
+  params: {
     category: string;
     slug: string;
-  }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
 }
 
-export default async function ProductPage(props: PageProps) {
-  const { category, slug } = await props.params;
+export default async function ProductPage({ params }: PageProps) {
+  const resolvedParams = await params
 
   try {
-    const id = extractIdFromSlug(slug)
+    const id = extractIdFromSlug(resolvedParams.slug)
     if (!id) {
       console.error('ID no encontrado en el slug')
       notFound()
     }
 
-    const product = await getProduct(category, id)
+    const product = await getProduct(resolvedParams.category, id)
     if (!product) {
       console.error('Producto no encontrado')
       notFound()
     }
+
     return (
-      <div className="container mx-auto px-4 py-12">
-        <Card className="max-w-4xl mx-auto">
-          <CardContent className="p-6">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="aspect-square relative w-full max-w-[300px] mx-auto">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover rounded-lg"
-                  sizes="300px"
-                  priority
-                />
-              </div>
-              <div className="flex flex-col">
-                <div>
-                  <p className="text-sm text-gray-500 mb-2">{product.categoryName}</p>
-                  <div className="flex items-center gap-2 mb-4">
-                    <h1 className="text-3xl font-bold">{product.name}</h1>
-                    {product.featured && (
-                      <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                    )}
-                  </div>
-                  <p className="text-2xl font-bold text-primary mb-4">
-                    ${product.price.toFixed(2)}
-                  </p>
-                  <p className="text-gray-600">{product.description}</p>
-                </div>
-                <div className="flex justify-end mt-6">
-                  <AddToCartButton product={product} />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Suspense fallback={<div>Cargando...</div>}>
+        <ProductView product={product} />
+      </Suspense>
     )
   } catch (error) {
-    console.error('Error al obtener el producto:', error)
+    console.error('Error:', error)
     notFound()
   }
 }

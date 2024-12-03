@@ -6,8 +6,11 @@ import { Card } from '@/components/ui/card'
 import { slugify } from '@/lib/utils'
 import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 
 export default function SearchResults() {
+  const { status } = useSession()
   const { 
     searchResults, 
     isSearching, 
@@ -72,7 +75,22 @@ export default function SearchResults() {
                     <div>
                       <h3 className="font-medium line-clamp-1">{product.name}</h3>
                       <p className="text-sm text-muted-foreground">{product.categoryName}</p>
-                      <p className="text-sm font-medium text-primary">${product.price.toFixed(2)}</p>
+                      {status === 'authenticated' ? (
+                        <p className="text-sm font-medium text-primary">
+                          ${product.price.toFixed(2)}
+                        </p>
+                      ) : (
+                        <Link 
+                          href="/auth/login"
+                          className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            clearSearch()
+                          }}
+                        >
+                          Inicia sesión para ver el precio
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </Card>
