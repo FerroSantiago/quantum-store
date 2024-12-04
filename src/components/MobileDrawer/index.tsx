@@ -5,15 +5,25 @@ import { useState } from 'react'
 import { Menu, X, LogIn, LogOut, UserCircle } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Navigation from '../Header/Navigation'
 
 export function MobileDrawer() {
   const [open, setOpen] = useState(false)
-  const { data: session, status } = useSession()
+  const { data: session, status: authStatus } = useSession() 
+  const router = useRouter()
   
   const handleSignOut = async () => {
-    await signOut({ redirect: true, callbackUrl: '/' })
-    setOpen(false)
+    try {
+      await signOut({
+        redirect: false
+      })
+      setOpen(false)
+      router.push('/')
+      //router.refresh()
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error)
+    }
   }
 
   const handleClose = () => {
@@ -59,15 +69,15 @@ export function MobileDrawer() {
 
           <div className="flex-1 overflow-y-auto">
             <div className="p-4 border-b">
-              {status === 'authenticated' ? (
+              {authStatus === 'authenticated' ? (
                 <div className="space-y-4">
                   <Link 
                     href="/profile"
                     className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-                    onClick={handleClose}
+                    onClick={() => setOpen(false)}
                   >
                     <UserCircle className="h-5 w-5" />
-                    <span>{session.user?.name || session.user?.email}</span>
+                    <span>{session?.user?.name || session?.user?.email}</span>
                   </Link>
                   <button
                     onClick={handleSignOut}

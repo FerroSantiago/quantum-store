@@ -1,8 +1,9 @@
-// /components/Header/index.tsx
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect} from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
 import { Input } from '@/components/ui/input'
 import { FeaturedFilterButton } from '../ui/featuredFilterButton'
 import { ShoppingCart, Search, X, LogIn, LogOut, UserCircle } from 'lucide-react'
@@ -10,11 +11,12 @@ import Navigation from './Navigation'
 import SearchResults from '../SearchResults'
 import { useCart } from '@/contexts/CartContext'
 import { useSearch } from '@/contexts/SearchContext'
-import { useSession, signOut } from 'next-auth/react'
+
 import { MobileDrawer } from '../MobileDrawer'
 
 export default function Header() {
-  const { data: session, status } = useSession()
+  const { data: session, status: authStatus } = useSession()
+  const router = useRouter()
   const { getTotalItems } = useCart()
   const { 
     searchQuery, 
@@ -31,7 +33,14 @@ export default function Header() {
   }, [setShowMobileSearch])
 
   const handleSignOut = async () => {
-    await signOut({ redirect: true, callbackUrl: '/' })
+    try {
+      await signOut({
+        redirect: false
+      })
+      router.push('/')
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error)
+    }
   }
 
   return (
@@ -79,23 +88,25 @@ export default function Header() {
               <div className="ml-auto flex items-center gap-4">
                 {/* Sesión - Solo visible en desktop */}
                 <div className="hidden sm:flex items-center gap-4">
-                  {status === 'authenticated' ? (
-                    <>
-                      <Link 
-                        href="/profile"
-                        className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-                      >
-                        <UserCircle className="h-5 w-5" />
-                        <span>{session.user?.name || session.user?.email}</span>
-                      </Link>
-                      <button
-                        onClick={handleSignOut}
-                        className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-                      >
-                        <LogOut className="h-5 w-5" />
+                {authStatus === 'authenticated' ? (
+                  <>
+                    <Link 
+                      href="/profile"
+                      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                    >
+                      <UserCircle className="h-5 w-5" />
+                      <span className="hidden sm:inline">
+                        {session?.user?.name || session?.user?.email}
+                      </span>
+                    </Link>
+                    <button
+                     onClick={handleSignOut}
+                      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                    >
+                      <LogOut className="h-5 w-5" />
                         <span>Cerrar Sesión</span>
-                      </button>
-                    </>
+                    </button>
+                  </>
                   ) : (
                     <Link 
                       href="/auth/login"

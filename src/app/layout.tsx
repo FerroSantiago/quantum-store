@@ -7,7 +7,7 @@ import { CartProvider } from '@/contexts/CartContext'
 import { SearchProvider } from '@/contexts/SearchContext'
 import { Toaster } from 'sonner'
 import { SessionProvider } from 'next-auth/react'
-import { auth } from './api/auth/[...nextauth]/route'
+import { auth } from '@/lib/auth'
 
 const inter = Inter({ subsets: ['latin'] })
 
