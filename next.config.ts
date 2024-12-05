@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
     ],
     dangerouslyAllowSVG: true,
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'quantum-store.vercel.app']
+    }
+  }
 };
 
 export default nextConfig;

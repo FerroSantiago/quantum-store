@@ -5,30 +5,31 @@ import ProductView from './ProductView'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
-// Definimos los tipos exactos que Next.js espera
-interface PageProps {
-  params: Promise<{ category: string; slug: string }>
-  searchParams?: { [key: string]: string | string[] | undefined }
+// Next.js 15 espera que los params sean una Promise
+type PageProps = {
+  params: Promise<{
+    category: string
+    slug: string
+  }>
 }
 
-// Componente de carga separado que maneja la asincronía
-async function ProductLoader({
-  params
+async function ProductContent({
+  category,
+  slug,
 }: {
-  params: { category: string; slug: string }
+  category: string
+  slug: string
 }) {
-  const id = extractIdFromSlug(params.slug)
+  const id = extractIdFromSlug(slug)
   if (!id) notFound()
 
-  const product = await getProduct(params.category, id)
+  const product = await getProduct(category, id)
   if (!product) notFound()
 
   return <ProductView product={product} />
 }
 
-// Página principal
 export default async function Page({ params }: PageProps) {
-  // Resolvemos la promesa de params
   const resolvedParams = await params
 
   return (
@@ -39,22 +40,24 @@ export default async function Page({ params }: PageProps) {
         </div>
       }
     >
-      <ProductLoader params={resolvedParams} />
+      <ProductContent 
+        category={resolvedParams.category} 
+        slug={resolvedParams.slug} 
+      />
     </Suspense>
   )
 }
 
-// Metadatos
-export async function generateMetadata(props: PageProps): Promise<Metadata> {
-  const params = await props.params
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const resolvedParams = await params
 
   try {
-    const id = extractIdFromSlug(params.slug)
+    const id = extractIdFromSlug(resolvedParams.slug)
     if (!id) {
       return { title: 'Producto no encontrado' }
     }
 
-    const product = await getProduct(params.category, id)
+    const product = await getProduct(resolvedParams.category, id)
     if (!product) {
       return { title: 'Producto no encontrado' }
     }
