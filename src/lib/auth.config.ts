@@ -2,6 +2,20 @@ import type { NextAuthConfig } from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+import { Role } from '@prisma/client'
+import { JWT } from 'next-auth/jwt'
+
+interface Credentials {
+  email: string
+  password: string
+}
+
+interface AuthUser {
+  id: string
+  email: string
+  name: string | null
+  role: Role
+}
 
 export const authConfig: NextAuthConfig = {
   providers: [
@@ -18,69 +32,63 @@ export const authConfig: NextAuthConfig = {
           type: "password" 
         }
       },
-      async authorize(credentials) {
-        try {
-          const email = credentials?.email as string | undefined
-          const password = credentials?.password as string | undefined
+      async authorize(credentials): Promise<AuthUser | null> {
+        const { email, password } = credentials as Credentials
 
-          if (!email || !password) {
-            throw new Error("Credenciales inválidas")
-          }
+        if (!email || !password) {
+          throw new Error("Credenciales inválidas")
+        }
 
-          const user = await prisma.user.findUnique({
-            where: { 
-              email: email // Ahora email es un string
-            }
-          })
+        const user = await prisma.user.findUnique({
+          where: { email }
+        })
 
-          if (!user || !user.password) {
-            throw new Error("Usuario no encontrado")
-          }
+        if (!user || !user.password) {
+          throw new Error("Usuario no encontrado")
+        }
 
-          const isValidPassword = await bcrypt.compare(
-            password, // Ahora password es un string
-            user.password
-          )
+        const isPasswordValid = await bcrypt.compare(password, user.password)
 
-          if (!isValidPassword) {
-            throw new Error("Contraseña incorrecta")
-          }
+        if (!isPasswordValid) {
+          throw new Error("Contraseña incorrecta")
+        }
 
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role
-          }
-        } catch (error) {
-          console.error('Auth error:', error)
-          return null
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
         }
       }
     })
   ],
-  trustHost: true,
-  pages: {
-    signIn: '/auth/login',
-    error: '/auth/error',
-  },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }): Promise<JWT> {
       if (user) {
-        token.role = user.role
+        return {
+          ...token,
+          id: user.id,
+          role: user.role
+        } as JWT
       }
       return token
     },
     async session({ session, token }) {
-      if (session?.user) {
-        session.user.role = token.role
+      if (session?.user && token.id && token.role) {
+        session.user = {
+          ...session.user,
+          id: token.id,
+          role: token.role as Role
+        }
       }
       return session
     }
   },
   session: {
-    strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60 // 30 days
+    strategy: "jwt"
   },
-  debug: process.env.NODE_ENV === 'development',
+  pages: {
+    signIn: '/auth/login',
+    error: '/auth/error',
+  },
 }

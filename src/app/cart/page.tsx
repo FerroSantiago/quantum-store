@@ -21,47 +21,47 @@ export default function CartPage() {
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-8">Carrito de Compras</h1>
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          {items.map(item => (
-            <Card key={item.id} className="mb-4 p-4">
-              <div className="flex gap-4">
-                <div className="relative w-24 h-24">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover rounded"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold">{item.name}</h3>
-                  <p className="text-gray-600">${item.price.toFixed(2)}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="mx-2">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="p-1 hover:bg-gray-100 rounded"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="ml-auto p-1 hover:bg-gray-100 rounded text-red-500"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+      <div className="md:col-span-2">
+        {items.map(item => (
+          <Card key={item.id} className="mb-4 p-4">
+            <div className="flex gap-4">
+              <div className="relative w-24 h-24">
+                <Image
+                  src={item.product.image}
+                  alt={item.product.name}
+                  fill
+                  className="object-cover rounded"
+                />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold">{item.product.name}</h3>
+                <p className="text-gray-600">${item.product.price.toFixed(2)}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="p-1 hover:bg-gray-100 rounded"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="mx-2">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="p-1 hover:bg-gray-100 rounded"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="ml-auto p-1 hover:bg-gray-100 rounded text-red-500"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
-            </Card>
-          ))}
-        </div>
+            </div>
+          </Card>
+        ))}
+      </div>
         <div>
           <Card className="p-4">
             <h2 className="text-xl font-bold mb-4">Resumen</h2>
