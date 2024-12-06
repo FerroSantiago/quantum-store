@@ -12,6 +12,9 @@ interface CartItem {
   product: Product
 }
 
+
+//Productos//
+
 export async function getProducts(): Promise<Product[]> {
   return prisma.product.findMany({
     orderBy: {
@@ -37,7 +40,7 @@ export async function getProduct(category: string, id: string): Promise<Product 
       where: {
         AND: [
           { category },
-          { id: { equals: id.slice(-24) } } // Aseguramos que solo usamos los últimos 24 caracteres
+          { id: { equals: id.slice(-24) } }
         ]
       }
     })
@@ -58,6 +61,7 @@ export async function getFeaturedProducts(): Promise<Product[]> {
   })
 }
 
+//Carrito//
 
 export async function addToCart(productId: string, quantity: number = 1): Promise<CartItem> {
   const session = await auth()
@@ -155,5 +159,20 @@ export async function getCart(): Promise<CartItem[]> {
   } catch (error) {
     console.error('Error al obtener el carrito:', error)
     throw new Error('Error al obtener el carrito')
+  }
+}
+
+//Admin//
+
+export async function getProductById(id: string): Promise<Product | null> {
+  try {
+    return await prisma.product.findUnique({
+      where: {
+        id
+      }
+    })
+  } catch (error) {
+    console.error('Error en getProductById:', error)
+    return null
   }
 }

@@ -1,47 +1,55 @@
-'use client'
+"use client";
 
-import { useEffect} from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { Input } from '@/components/ui/input'
-import { FeaturedFilterButton } from '../ui/featuredFilterButton'
-import { ShoppingCart, Search, X, LogIn, LogOut, UserCircle } from 'lucide-react'
-import Navigation from './Navigation'
-import SearchResults from '../SearchResults'
-import { useCart } from '@/contexts/CartContext'
-import { useSearch } from '@/contexts/SearchContext'
+import { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { Input } from "@/components/ui/input";
+import { FeaturedFilterButton } from "../ui/featuredFilterButton";
+import {
+  ShoppingCart,
+  Search,
+  X,
+  LogIn,
+  LogOut,
+  UserCircle,
+  Settings,
+} from "lucide-react";
+import Navigation from "./Navigation";
+import SearchResults from "../SearchResults";
+import { useCart } from "@/contexts/CartContext";
+import { useSearch } from "@/contexts/SearchContext";
 
-import { MobileDrawer } from '../MobileDrawer'
+import { MobileDrawer } from "../MobileDrawer";
 
 export default function Header() {
-  const { data: session, status: authStatus } = useSession()
-  const router = useRouter()
-  const { getTotalItems } = useCart()
-  const { 
-    searchQuery, 
-    setSearchQuery, 
-    showMobileSearch, 
+  const { data: session, status: authStatus } = useSession();
+  const router = useRouter();
+  const { getTotalItems } = useCart();
+  const {
+    searchQuery,
+    setSearchQuery,
+    showMobileSearch,
     setShowMobileSearch,
-    setShowResults
-  } = useSearch()
-  
-  const totalItems = getTotalItems()
+    setShowResults,
+  } = useSearch();
+
+  const totalItems = getTotalItems();
 
   useEffect(() => {
-    return () => setShowMobileSearch(false)
-  }, [setShowMobileSearch])
+    return () => setShowMobileSearch(false);
+  }, [setShowMobileSearch]);
 
   const handleSignOut = async () => {
     try {
       await signOut({
-        redirect: false
-      })
-      router.push('/')
+        redirect: false,
+      });
+      router.push("/");
     } catch (error) {
-      console.error('Error al cerrar sesión:', error)
+      console.error("Error al cerrar sesión:", error);
     }
-  }
+  };
 
   return (
     <header className="border-b sticky top-0 bg-background z-50">
@@ -52,11 +60,15 @@ export default function Header() {
               Logo
             </Link>
           )}
-          
-          <div className={`relative ${showMobileSearch ? 'flex-1' : 'hidden sm:block flex-1 max-w-xl'}`}>
-            <Input 
-              type="search" 
-              placeholder="Buscar productos..." 
+
+          <div
+            className={`relative ${
+              showMobileSearch ? "flex-1" : "hidden sm:block flex-1 max-w-xl"
+            }`}
+          >
+            <Input
+              type="search"
+              placeholder="Buscar productos..."
               className="w-full pl-4 pr-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -65,7 +77,7 @@ export default function Header() {
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <SearchResults />
           </div>
-          
+
           {showMobileSearch ? (
             <FeaturedFilterButton
               variant="ghost"
@@ -84,31 +96,40 @@ export default function Header() {
               >
                 <Search className="h-5 w-5" />
               </FeaturedFilterButton>
-              
+
               <div className="ml-auto flex items-center gap-4">
                 {/* Sesión - Solo visible en desktop */}
                 <div className="hidden sm:flex items-center gap-4">
-                {authStatus === 'authenticated' ? (
-                  <>
-                    <Link 
-                      href="/profile"
-                      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-                    >
-                      <UserCircle className="h-5 w-5" />
-                      <span className="hidden sm:inline">
-                        {session?.user?.name || session?.user?.email}
-                      </span>
-                    </Link>
-                    <button
-                     onClick={handleSignOut}
-                      className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-                    >
-                      <LogOut className="h-5 w-5" />
+                  {authStatus === "authenticated" ? (
+                    <>
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                      >
+                        <UserCircle className="h-5 w-5" />
+                        <span className="hidden sm:inline">
+                          {session?.user?.name || session?.user?.email}
+                        </span>
+                      </Link>
+                      {session?.user?.role === "ADMIN" && (
+                        <Link
+                          href="/admin/products"
+                          className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                        >
+                          <Settings className="h-5 w-5" />
+                          <span>Panel Admin</span>
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                      >
+                        <LogOut className="h-5 w-5" />
                         <span>Cerrar Sesión</span>
-                    </button>
-                  </>
+                      </button>
+                    </>
                   ) : (
-                    <Link 
+                    <Link
                       href="/auth/login"
                       className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
                     >
@@ -117,7 +138,7 @@ export default function Header() {
                     </Link>
                   )}
                 </div>
-                
+
                 <Link href="/cart" className="relative">
                   <ShoppingCart className="h-6 w-6" />
                   {totalItems > 0 && (
@@ -138,5 +159,5 @@ export default function Header() {
         <Navigation variant="horizontal" />
       </div>
     </header>
-  )
+  );
 }

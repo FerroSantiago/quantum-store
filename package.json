@@ -27,7 +27,8 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "sonner": "^1.7.0",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
