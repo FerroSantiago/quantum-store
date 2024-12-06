@@ -1,59 +1,59 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { signIn, useSession } from 'next-auth/react'
-import { AuthForm, FormInput } from '@/components/ui/auth-form'
-import { toast } from 'sonner'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { signIn, useSession } from "next-auth/react";
+import { AuthForm, FormInput } from "@/components/ui/auth-form";
+import { toast } from "sonner";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { status } = useSession()
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<{[key: string]: string}>({})
+  const router = useRouter();
+  const { status } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      router.push('/dashboard')
+    if (status === "authenticated") {
+      router.push("/");
     }
-  }, [status, router])
+  }, [status, router]);
 
   // Si está autenticado, no mostrar nada mientras redirige
-  if (status === 'authenticated') {
-    return null
+  if (status === "authenticated") {
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoading(true)
-    setErrors({})
+    e.preventDefault();
+    setLoading(true);
+    setErrors({});
 
-    const formData = new FormData(e.currentTarget)
-    
+    const formData = new FormData(e.currentTarget);
+
     try {
-      const res = await signIn('credentials', {
-        email: formData.get('email'),
-        password: formData.get('password'),
+      const res = await signIn("credentials", {
+        email: formData.get("email"),
+        password: formData.get("password"),
         redirect: false,
-      })
+      });
 
       if (res?.error) {
-        setErrors({ form: "Credenciales inválidas" })
-        toast.error("Credenciales inválidas")
-        return
+        setErrors({ form: "Credenciales inválidas" });
+        toast.error("Credenciales inválidas");
+        return;
       }
 
-      router.push('/dashboard')
-      toast.success('¡Bienvenido de vuelta!')
+      router.push("/");
+      toast.success("¡Bienvenido de vuelta!");
     } catch (err) {
-      console.error('Error de login:', err)
-      setErrors({ form: "Algo salió mal. Por favor, intenta de nuevo." })
-      toast.error('Algo salió mal. Por favor, intenta de nuevo.')
+      console.error("Error de login:", err);
+      setErrors({ form: "Algo salió mal. Por favor, intenta de nuevo." });
+      toast.error("Algo salió mal. Por favor, intenta de nuevo.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -100,5 +100,5 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
-  )
+  );
 }

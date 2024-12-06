@@ -78,7 +78,7 @@ export function MobileDrawer() {
                   </Link>
                   {session?.user?.role === "ADMIN" && (
                     <Link
-                      href="/admin/products"
+                      href="/admin"
                       className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
                       onClick={() => setOpen(false)}
                     >
