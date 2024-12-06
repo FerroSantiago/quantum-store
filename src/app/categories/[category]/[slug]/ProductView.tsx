@@ -1,25 +1,26 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { Star, DollarSign, Eye } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import AddToCartButton from '@/components/AddToCartButton'
+import Image from "next/image";
+import { Star, DollarSign, Eye } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import AddToCartButton from "@/components/AddToCartButton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { useSession } from 'next-auth/react'
-import Link from 'next/link'
-import { Product } from '@/lib/types'
+} from "@/components/ui/tooltip";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { Product } from "@/lib/types";
+import { UserStatus } from "@prisma/client";
 
 interface ProductViewProps {
-  product: Product
+  product: Product;
 }
 
 export default function ProductView({ product }: ProductViewProps) {
-  const { status } = useSession()
+  const { data: session, status: authStatus } = useSession();
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -57,23 +58,41 @@ export default function ProductView({ product }: ProductViewProps) {
               {/* Precio y botón */}
               <div className="mt-6 pt-4 border-t">
                 <div className="flex items-center justify-between gap-4">
-                  {status === 'authenticated' ? (
-                    <>
-                      <p className="text-2xl font-bold text-primary">
-                        ${product.price.toFixed(2)}
-                      </p>
-                      <AddToCartButton product={product} />
-                    </>
+                  {authStatus === "authenticated" ? (
+                    session?.user?.status === UserStatus.APPROVED ? (
+                      <>
+                        <p className="text-2xl font-bold text-primary">
+                          ${product.price.toFixed(2)}
+                        </p>
+                        <AddToCartButton product={product} />
+                      </>
+                    ) : (
+                      <TooltipProvider>
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <div className="text-muted-foreground">
+                              Aprobación pendiente para ver precios
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Espere la aprobación del administrador</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )
                   ) : (
                     <TooltipProvider>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
-                          <Link 
+                          <Link
                             href="/auth/login"
                             className="inline-flex items-center gap-2 text-xl text-muted-foreground hover:text-primary transition-colors"
                           >
                             <DollarSign className="h-6 w-6" />
-                            <Eye className="h-6 w-6" style={{ textDecoration: 'line-through' }} />
+                            <Eye
+                              className="h-6 w-6"
+                              style={{ textDecoration: "line-through" }}
+                            />
                           </Link>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -89,5 +108,5 @@ export default function ProductView({ product }: ProductViewProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

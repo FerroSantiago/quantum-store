@@ -1,12 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { Product } from "@/lib/types";
 import { deleteProduct } from "@/lib/actions/admin/products";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Pencil, Trash2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { Pencil, Trash2 } from "lucide-react";
 
 export default function ProductsTable({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();

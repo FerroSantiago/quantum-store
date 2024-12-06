@@ -1,54 +1,55 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { useSearch } from '@/contexts/SearchContext'
-import { Card } from '@/components/ui/card'
-import { slugify } from '@/lib/utils'
-import { useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
-import Link from 'next/link'
+import { useEffect, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useSearch } from "@/contexts/SearchContext";
+import { Card } from "@/components/ui/card";
+import { slugify } from "@/lib/utils";
 
 export default function SearchResults() {
-  const { status } = useSession()
-  const { 
-    searchResults, 
-    isSearching, 
-    searchQuery, 
+  const { status } = useSession();
+  const {
+    searchResults,
+    isSearching,
+    searchQuery,
     showResults,
     setShowResults,
-    clearSearch 
-  } = useSearch()
-  const resultsRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
+    clearSearch,
+  } = useSearch();
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (resultsRef.current && !resultsRef.current.contains(event.target as Node)) {
-        setShowResults(false)
+      if (
+        resultsRef.current &&
+        !resultsRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [setShowResults])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [setShowResults]);
 
-  if (!searchQuery || !showResults) return null
+  if (!searchQuery || !showResults) return null;
 
   const handleProductClick = (url: string) => {
-    clearSearch()
-    router.push(url)
-  }
+    clearSearch();
+    router.push(url);
+  };
 
   return (
-    <div 
+    <div
       ref={resultsRef}
       className="absolute top-full left-0 right-0 bg-background border rounded-md mt-1 shadow-lg max-h-[70vh] overflow-y-auto z-50"
     >
       {isSearching ? (
-        <div className="p-4 text-center text-muted-foreground">
-          Buscando...
-        </div>
+        <div className="p-4 text-center text-muted-foreground">Buscando...</div>
       ) : searchResults.length > 0 ? (
         <div className="p-2">
           <p className="text-sm text-muted-foreground px-2 py-1">
@@ -58,7 +59,13 @@ export default function SearchResults() {
             {searchResults.map((product) => (
               <div
                 key={product.id}
-                onClick={() => handleProductClick(`/categories/${product.category}/${slugify(product.name)}-${product.id}`)}
+                onClick={() =>
+                  handleProductClick(
+                    `/categories/${product.category}/${slugify(product.name)}-${
+                      product.id
+                    }`
+                  )
+                }
                 className="cursor-pointer"
               >
                 <Card className="hover:bg-accent/50 transition-colors">
@@ -73,19 +80,23 @@ export default function SearchResults() {
                       />
                     </div>
                     <div>
-                      <h3 className="font-medium line-clamp-1">{product.name}</h3>
-                      <p className="text-sm text-muted-foreground">{product.categoryName}</p>
-                      {status === 'authenticated' ? (
+                      <h3 className="font-medium line-clamp-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {product.categoryName}
+                      </p>
+                      {status === "authenticated" ? (
                         <p className="text-sm font-medium text-primary">
                           ${product.price.toFixed(2)}
                         </p>
                       ) : (
-                        <Link 
+                        <Link
                           href="/auth/login"
                           className="text-sm text-muted-foreground hover:text-primary transition-colors"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            clearSearch()
+                            e.stopPropagation();
+                            clearSearch();
                           }}
                         >
                           Inicia sesión para ver el precio
@@ -104,5 +115,5 @@ export default function SearchResults() {
         </div>
       )}
     </div>
-  )
+  );
 }

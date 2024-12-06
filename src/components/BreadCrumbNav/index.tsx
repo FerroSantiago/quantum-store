@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { categories } from "@/lib/constants";
 import { getProduct } from "@/lib/actions";
-import { useEffect, useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbList,

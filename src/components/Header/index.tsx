@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { FeaturedFilterButton } from "../ui/featuredFilterButton";
+import Navigation from "./Navigation";
+import SearchResults from "../SearchResults";
+import { useCart } from "@/contexts/CartContext";
+import { useSearch } from "@/contexts/SearchContext";
 import {
   ShoppingCart,
   Search,
@@ -15,10 +19,6 @@ import {
   UserCircle,
   Settings,
 } from "lucide-react";
-import Navigation from "./Navigation";
-import SearchResults from "../SearchResults";
-import { useCart } from "@/contexts/CartContext";
-import { useSearch } from "@/contexts/SearchContext";
 
 import { MobileDrawer } from "../MobileDrawer";
 

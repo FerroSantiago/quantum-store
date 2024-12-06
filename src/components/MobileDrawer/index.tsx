@@ -1,7 +1,7 @@
 "use client";
 
-import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Menu, X, LogIn, LogOut, UserCircle, Settings } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";

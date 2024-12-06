@@ -1,36 +1,35 @@
-import { notFound } from 'next/navigation'
-import { getProduct } from '@/lib/actions'
-import { extractIdFromSlug } from '@/lib/utils'
-import ProductView from './ProductView'
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
+import { notFound } from "next/navigation";
+import { getProduct } from "@/lib/actions";
+import { extractIdFromSlug } from "@/lib/utils";
+import ProductView from "./ProductView";
+import { Suspense } from "react";
+import type { Metadata } from "next";
 
-// Next.js 15 espera que los params sean una Promise
 type PageProps = {
   params: Promise<{
-    category: string
-    slug: string
-  }>
-}
+    category: string;
+    slug: string;
+  }>;
+};
 
 async function ProductContent({
   category,
   slug,
 }: {
-  category: string
-  slug: string
+  category: string;
+  slug: string;
 }) {
-  const id = extractIdFromSlug(slug)
-  if (!id) notFound()
+  const id = extractIdFromSlug(slug);
+  if (!id) notFound();
 
-  const product = await getProduct(category, id)
-  if (!product) notFound()
+  const product = await getProduct(category, id);
+  if (!product) notFound();
 
-  return <ProductView product={product} />
+  return <ProductView product={product} />;
 }
 
 export default async function Page({ params }: PageProps) {
-  const resolvedParams = await params
+  const resolvedParams = await params;
 
   return (
     <Suspense
@@ -40,26 +39,28 @@ export default async function Page({ params }: PageProps) {
         </div>
       }
     >
-      <ProductContent 
-        category={resolvedParams.category} 
-        slug={resolvedParams.slug} 
+      <ProductContent
+        category={resolvedParams.category}
+        slug={resolvedParams.slug}
       />
     </Suspense>
-  )
+  );
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const resolvedParams = await params
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
 
   try {
-    const id = extractIdFromSlug(resolvedParams.slug)
+    const id = extractIdFromSlug(resolvedParams.slug);
     if (!id) {
-      return { title: 'Producto no encontrado' }
+      return { title: "Producto no encontrado" };
     }
 
-    const product = await getProduct(resolvedParams.category, id)
+    const product = await getProduct(resolvedParams.category, id);
     if (!product) {
-      return { title: 'Producto no encontrado' }
+      return { title: "Producto no encontrado" };
     }
 
     return {
@@ -68,13 +69,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       openGraph: {
         title: product.name,
         description: product.description,
-        images: [{ url: product.image }]
-      }
-    }
+        images: [{ url: product.image }],
+      },
+    };
   } catch {
     return {
-      title: 'Error',
-      description: 'Ha ocurrido un error al cargar el producto'
-    }
+      title: "Error",
+      description: "Ha ocurrido un error al cargar el producto",
+    };
   }
 }

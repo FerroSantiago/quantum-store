@@ -1,20 +1,16 @@
 import type { NextAuthConfig } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-import { Role } from '@prisma/client'
-import { JWT } from 'next-auth/jwt'
-
-interface Credentials {
-  email: string
-  password: string
-}
+import { Role, UserStatus } from '@prisma/client'
 
 interface AuthUser {
   id: string
   email: string
   name: string | null
   role: Role
+  status: UserStatus
 }
 
 export const authConfig: NextAuthConfig = {
@@ -33,7 +29,10 @@ export const authConfig: NextAuthConfig = {
         }
       },
       async authorize(credentials): Promise<AuthUser | null> {
-        const { email, password } = credentials as Credentials
+        const { email, password } = credentials as { 
+          email: string, 
+          password: string 
+        }
 
         if (!email || !password) {
           throw new Error("Credenciales inválidas")
@@ -57,28 +56,34 @@ export const authConfig: NextAuthConfig = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role
+          role: user.role,
+          status: user.status
         }
       }
     })
   ],
   callbacks: {
     async jwt({ token, user }): Promise<JWT> {
-      if (user) {
-        return {
-          ...token,
-          id: user.id,
-          role: user.role
-        } as JWT
+      if (user && user.id) {
+        const newToken = token as JWT & {
+          id: string
+          role: Role
+          status: UserStatus
+        }
+        newToken.id = user.id
+        newToken.role = user.role
+        newToken.status = user.status
+        return newToken
       }
       return token
     },
     async session({ session, token }) {
-      if (session?.user && token.id && token.role) {
+      if (session?.user) {
         session.user = {
           ...session.user,
-          id: token.id,
-          role: token.role as Role
+          id: token.id as string,
+          role: token.role as Role,
+          status: token.status as UserStatus
         }
       }
       return session

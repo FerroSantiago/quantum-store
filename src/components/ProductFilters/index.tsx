@@ -1,18 +1,24 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
-import { Star } from 'lucide-react';
-import { FeaturedFilterButton } from '@/components/ui/featuredFilterButton';
+import React, { useState } from "react";
+import { Star } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { FeaturedFilterButton } from "@/components/ui/featuredFilterButton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Product } from '@/lib/types';
+} from "@/components/ui/tooltip";
+import { Product } from "@/lib/types";
 
-type SortOption = 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc';
+type SortOption = "price-asc" | "price-desc" | "name-asc" | "name-desc";
 
 interface ProductFiltersProps {
   products: Product[];
@@ -20,28 +26,28 @@ interface ProductFiltersProps {
 }
 
 const ProductFilters = ({ products, onFilterChange }: ProductFiltersProps) => {
-  const [currentSort, setCurrentSort] = useState<SortOption>('name-asc');
+  const [currentSort, setCurrentSort] = useState<SortOption>("name-asc");
   const [showFeatured, setShowFeatured] = useState(false);
 
   const applyFilters = (sortOption: SortOption, featured: boolean) => {
     let filteredProducts = [...products];
-    
+
     if (featured) {
-      filteredProducts = filteredProducts.filter(product => product.featured);
+      filteredProducts = filteredProducts.filter((product) => product.featured);
     }
 
     switch (sortOption) {
-      case 'price-asc':
+      case "price-asc":
         filteredProducts.sort((a, b) => a.price - b.price);
         break;
-      case 'price-desc':
+      case "price-desc":
         filteredProducts.sort((a, b) => b.price - a.price);
         break;
-      case 'name-asc':
-        filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+      case "name-asc":
+        filteredProducts.sort((a, b) => a.name.localeCompare(b.name, "es"));
         break;
-      case 'name-desc':
-        filteredProducts.sort((a, b) => b.name.localeCompare(a.name, 'es'));
+      case "name-desc":
+        filteredProducts.sort((a, b) => b.name.localeCompare(a.name, "es"));
         break;
     }
 
@@ -61,9 +67,14 @@ const ProductFilters = ({ products, onFilterChange }: ProductFiltersProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-600 whitespace-nowrap">Ordenar por:</span>
+      <span className="text-sm text-gray-600 whitespace-nowrap">
+        Ordenar por:
+      </span>
       <div className="w-[240px]">
-        <Select defaultValue={currentSort} onValueChange={(value: SortOption) => handleSortChange(value)}>
+        <Select
+          defaultValue={currentSort}
+          onValueChange={(value: SortOption) => handleSortChange(value)}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Ordenar por..." />
           </SelectTrigger>
@@ -78,17 +89,29 @@ const ProductFilters = ({ products, onFilterChange }: ProductFiltersProps) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <FeaturedFilterButton 
-              variant="ghost" 
-              size="icon" 
+            <FeaturedFilterButton
+              variant="ghost"
+              size="icon"
               onClick={toggleFeatured}
-              className={`ml-2 transition-colors ${showFeatured ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-400 hover:text-gray-500'}`}
+              className={`ml-2 transition-colors ${
+                showFeatured
+                  ? "text-yellow-400 hover:text-yellow-500"
+                  : "text-gray-400 hover:text-gray-500"
+              }`}
             >
-              <Star className={`h-5 w-5 ${showFeatured ? 'fill-yellow-400' : 'fill-none'}`} />
+              <Star
+                className={`h-5 w-5 ${
+                  showFeatured ? "fill-yellow-400" : "fill-none"
+                }`}
+              />
             </FeaturedFilterButton>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{showFeatured ? 'Mostrar todos los productos' : 'Mostrar solo destacados'}</p>
+            <p>
+              {showFeatured
+                ? "Mostrar todos los productos"
+                : "Mostrar solo destacados"}
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

@@ -1,7 +1,7 @@
 "use client";
 
-import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import {
   ChevronLeft,
@@ -12,8 +12,8 @@ import {
   Target,
   BarChart2,
   Truck,
+  LucideIcon,
 } from "lucide-react";
-import { LucideIcon } from "lucide-react";
 
 interface ContentWithList {
   text: string;
