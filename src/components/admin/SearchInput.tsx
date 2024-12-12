@@ -4,7 +4,11 @@ import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 
-export default function UserSearch() {
+interface SearchInputProps {
+  placeholder: string;
+}
+
+export default function SearchInput({ placeholder }: SearchInputProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -23,7 +27,7 @@ export default function UserSearch() {
     <div className="relative">
       <input
         type="text"
-        placeholder="Buscar mail o nombre"
+        placeholder={placeholder}
         defaultValue={searchParams.get("search")?.toString()}
         onChange={(e) => handleSearch(e.target.value)}
         className="w-full md:max-w-sm rounded-md border bg-transparent p-2 pr-8 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"

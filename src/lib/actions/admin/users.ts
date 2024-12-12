@@ -1,17 +1,9 @@
-// src/lib/actions/admin/users.ts
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/lib/auth'
+import { checkAdminRole } from './utils'
 import { revalidatePath } from 'next/cache'
 import { UserStatus } from '@prisma/client'
-
-async function checkAdminRole() {
-  const session = await auth()
-  if (session?.user?.role !== 'ADMIN') {
-    throw new Error('No autorizado')
-  }
-}
 
 export async function updateUserStatus(userId: string, status: UserStatus) {
   await checkAdminRole()

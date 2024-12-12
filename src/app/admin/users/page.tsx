@@ -1,19 +1,17 @@
 import { getUsers } from "@/lib/actions/admin/users";
 import UsersTable from "@/components/admin/UsersTable";
-import UserSearch from "@/components/admin/UserSearch";
+import SearchInput from "@/components/admin/SearchInput";
+import { PageHeader } from "@/components/admin/PageHeader";
 
 export default async function AdminUsersPage() {
   const users = await getUsers();
 
   return (
     <div>
-      <div className="flex flex-col gap-6">
-        <h2 className="text-2xl font-semibold">Gestión de Usuarios</h2>
-        <div className="flex justify-between items-center">
-          <UserSearch />
-        </div>
-        <UsersTable users={users} />
-      </div>
+      <PageHeader title="Gestión de Usuarios">
+        <SearchInput placeholder="Buscar por email o nombre..." />
+      </PageHeader>
+      <UsersTable users={users} />
     </div>
   );
 }
