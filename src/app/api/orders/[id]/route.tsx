@@ -6,16 +6,19 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    // Esperar los parámetros antes de usarlos
+    const { id } = await params;
+
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const order = await prisma.order.findUnique({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
       include: {
