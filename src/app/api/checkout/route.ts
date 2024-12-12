@@ -68,12 +68,15 @@ export async function POST() {
         },
         external_reference: payment.id,
         auto_return: 'approved',
+        notification_url: `${process.env.NEXTAUTH_URL}/api/webhooks/mercadopago`,
       }
     });
 
     await prisma.payment.update({
       where: { id: payment.id },
-      data: { preference_id: preference.id }
+      data: { 
+        preference_id: preference.id,
+      }
     });
 
     await prisma.cartItem.deleteMany({
