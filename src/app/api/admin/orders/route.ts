@@ -24,7 +24,7 @@ export async function GET() {
           },
         },
         payment: true,
-        statusHistory: {
+        orderEvents: {
           orderBy: {
             createdAt: "desc",
           },

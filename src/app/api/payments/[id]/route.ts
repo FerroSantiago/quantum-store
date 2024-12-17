@@ -1,13 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+type Context = {
+  params: Promise<{ id: string }>;
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+  req: NextRequest,
+  context: Context
+): Promise<NextResponse> {
   try {
-    // Acceder a params.id de manera asíncrona
-    const { id } = await params;
+    const params = await context.params;
+    const { id } = params;
+    
     console.log('🔍 Fetching payment:', id);
 
     const payment = await prisma.payment.findUnique({

@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 type Context = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
@@ -19,7 +19,9 @@ export async function PATCH(
 
   try {
     const { status } = await req.json();
-    const { id } = context.params;
+    // Esperamos a que se resuelvan los params
+    const params = await context.params;
+    const { id } = params;
 
     const order = await prisma.order.update({
       where: { id },

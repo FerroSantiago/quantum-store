@@ -11,7 +11,7 @@ export default async function AdminOrdersPage() {
     throw new Error("Unauthorized");
   }
 
-  const orders = await prisma.order.findMany({
+  const rawOrders = await prisma.order.findMany({
     include: {
       user: {
         select: {
@@ -35,6 +35,24 @@ export default async function AdminOrdersPage() {
       createdAt: "desc",
     },
   });
+
+  // Convertir las fechas a string
+  const orders = rawOrders.map((order) => ({
+    ...order,
+    createdAt: order.createdAt.toISOString(),
+    updatedAt: order.updatedAt.toISOString(),
+    payment: order.payment
+      ? {
+          ...order.payment,
+          createdAt: order.payment.createdAt.toISOString(),
+          updatedAt: order.payment.updatedAt.toISOString(),
+        }
+      : null,
+    orderEvents: order.orderEvents.map((event) => ({
+      ...event,
+      createdAt: event.createdAt.toISOString(),
+    })),
+  }));
 
   return (
     <div className="container mx-auto px-4 py-8">
