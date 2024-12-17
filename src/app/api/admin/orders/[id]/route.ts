@@ -2,26 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
+type Props = {
+  params: { id: string }
 }
 
 
 export async function PATCH(
   req: NextRequest,
-  context: RouteParams
-) {
+  { params }: Props
+): Promise<NextResponse> {
   const session = await auth();
 
   if (!session?.user?.id || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
+    try {
     const { status } = await req.json();
-    const { id } = context.params;
+    const { id } = params;
 
     const order = await prisma.order.update({
       where: { id },
