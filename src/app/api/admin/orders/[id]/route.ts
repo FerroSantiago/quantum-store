@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-type Props = {
-  params: { id: string }
-}
-
+type Context = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 export async function PATCH(
   req: NextRequest,
-  { params }: Props
+  context: Context
 ): Promise<NextResponse> {
   const session = await auth();
 
@@ -17,9 +17,9 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-    try {
+  try {
     const { status } = await req.json();
-    const { id } = params;
+    const { id } = context.params;
 
     const order = await prisma.order.update({
       where: { id },
