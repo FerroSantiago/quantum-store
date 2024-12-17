@@ -202,7 +202,7 @@ export default function OrdersTable({
                 <td className="p-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <select
-                      className="p-2 border rounded-md bg-white"
+                      className="p-2 border rounded-md bg-black"
                       value={order.status}
                       onChange={(e) =>
                         handleStatusUpdate(

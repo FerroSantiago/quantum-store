@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const session = await auth();
@@ -13,7 +13,7 @@ export async function PATCH(
   }
 
   try {
-    const { id } = await params;
+    const { id } = params;
     const { status } = await request.json();
 
     const order = await prisma.order.update({
