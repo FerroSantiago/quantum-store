@@ -2,9 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+interface RouteParams {
+  params: {
+    id: string;
+  };
+}
+
+
 export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: RouteParams
 ) {
   const session = await auth();
 
@@ -13,8 +20,8 @@ export async function PATCH(
   }
 
   try {
-    const { id } = params;
-    const { status } = await request.json();
+    const { status } = await req.json();
+    const { id } = context.params;
 
     const order = await prisma.order.update({
       where: { id },
