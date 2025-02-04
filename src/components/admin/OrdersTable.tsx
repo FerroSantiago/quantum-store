@@ -152,7 +152,7 @@ export default function OrdersTable({
       ) : (
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b">
+            <tr className="border-bz">
               <th className="text-left p-4">ID</th>
               <th className="text-left p-4">Cliente</th>
               <th className="text-left p-4">Total</th>
@@ -165,7 +165,7 @@ export default function OrdersTable({
           </thead>
           <tbody>
             {filteredOrders.map((order) => (
-              <tr key={order.id} className="border-b hover:bg-muted/50">
+              <tr key={order.id} className="border-b border-border hover:bg-muted/50">
                 <td className="p-4 font-medium">
                   <Link
                     href={`/admin/orders/${order.id}`}
@@ -186,11 +186,10 @@ export default function OrdersTable({
                 </td>
                 <td className="p-4">
                   <span
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      order.payment?.status === "APPROVED"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${order.payment?.status === "APPROVED"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-800"
+                      }`}
                   >
                     {order.payment?.status || "N/A"}
                   </span>
@@ -202,7 +201,7 @@ export default function OrdersTable({
                 <td className="p-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <select
-                      className="p-2 border rounded-md bg-black"
+                      className="p-2 border border-border rounded-md bg-background"
                       value={order.status}
                       onChange={(e) =>
                         handleStatusUpdate(

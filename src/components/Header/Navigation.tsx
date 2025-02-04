@@ -30,7 +30,7 @@ export default function Navigation({ variant = 'horizontal', onNavigate }: Navig
   }
 
   return (
-    <nav className="border-t bg-muted overflow-x-auto hidden sm:block">
+    <nav className="border-t border-border bg-muted overflow-x-auto hidden sm:block">
       <div className="container mx-auto px-4">
         <ul className="flex justify-center space-x-8 whitespace-nowrap">
           {sections.map((section, index) => (

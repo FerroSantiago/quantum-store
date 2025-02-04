@@ -43,13 +43,12 @@ export function Table<T extends { id: string }>({
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b">
+          <tr className="border-b border-border">
             {columns.map((column) => (
               <th
                 key={column.key}
-                className={`p-4 ${
-                  column.key === "actions" ? "text-right" : "text-left"
-                }`}
+                className={`p-4 ${column.key === "actions" ? "text-right" : "text-left"
+                  }`}
               >
                 {column.header}
               </th>
@@ -58,13 +57,12 @@ export function Table<T extends { id: string }>({
         </thead>
         <tbody>
           {filteredData.map((item) => (
-            <tr key={item.id} className="border-b hover:bg-muted/50">
+            <tr key={item.id} className="border-b border-border">
               {columns.map((column) => (
                 <td
                   key={`${item.id}-${column.key}`}
-                  className={`p-4 ${
-                    column.key === "actions" ? "text-right" : ""
-                  }`}
+                  className={`p-4 ${column.key === "actions" ? "text-right" : ""
+                    }`}
                 >
                   {column.cell(item)}
                 </td>

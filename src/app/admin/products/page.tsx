@@ -13,7 +13,7 @@ export default async function AdminProductsPage() {
         <SearchInput placeholder="Buscar productos..." />
         <Link
           href="/admin/products/new"
-          className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+          className="bg-primary px-4 py-2 border border-border rounded-md hover:bg-primary/90 transition-colors"
         >
           Agregar Producto
         </Link>

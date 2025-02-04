@@ -32,7 +32,7 @@ export default function ProductCard({
   const href = `/categories/${category}/${slug}`;
 
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-lg h-full">
+    <Card className="overflow-hidden h-full">
       <CardContent className="p-0">
         <Link href={href} className="block">
           <div className="aspect-square relative w-full bg-gray-100">
@@ -42,11 +42,10 @@ export default function ProductCard({
               fill
               className={`
                object-cover duration-700 ease-in-out
-               ${
-                 isLoading
-                   ? "scale-110 blur-2xl grayscale"
-                   : "scale-100 blur-0 grayscale-0"
-               }
+               ${isLoading
+                  ? "scale-110 blur-2xl grayscale"
+                  : "scale-100 blur-0 grayscale-0"
+                }
              `}
               sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
               priority={false}

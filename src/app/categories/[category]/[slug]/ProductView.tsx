@@ -56,7 +56,7 @@ export default function ProductView({ product }: ProductViewProps) {
               </div>
 
               {/* Precio y botón */}
-              <div className="mt-6 pt-4 border-t">
+              <div className="mt-6 pt-4 border-t border-border">
                 <div className="flex items-center justify-between gap-4">
                   {authStatus === "authenticated" ? (
                     session?.user?.status === UserStatus.APPROVED ? (

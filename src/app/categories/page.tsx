@@ -7,10 +7,10 @@ export default function CategoriesPage() {
       <h1 className="text-3xl font-bold mb-8">Todas las Categorías</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map(category => (
-          <Link 
-            key={category.id} 
+          <Link
+            key={category.id}
             href={`/categories/${category.id}`}
-            className="block p-6 rounded-lg border hover:shadow-lg transition-shadow"
+            className="block p-6 rounded-lg border border-border hover:shadow-lg transition-shadow"
           >
             <h2 className="text-xl font-semibold">{category.name}</h2>
           </Link>

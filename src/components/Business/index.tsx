@@ -283,11 +283,10 @@ export default function Business() {
         {[0, 1, 2].map((index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-all border ${
-              index === currentSlide
-                ? "border-primary bg-primary"
-                : "border-gray-300 bg-gray-300"
-            }`}
+            className={`w-2 h-2 rounded-full transition-all border border-secondary ${index === currentSlide
+              ? "bg-primary"
+              : "bg-secondary"
+              }`}
             aria-label={`Ir a la diapositiva ${index + 1}`}
             onClick={() => emblaApi?.scrollTo(index)}
           />
@@ -296,14 +295,14 @@ export default function Business() {
 
       <>
         <button
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-8 h-8 flex items-center justify-center hover:bg-primary/90"
           onClick={() => emblaApi?.scrollPrev()}
           aria-label="Anterior diapositiva"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-8 h-8 flex items-center justify-center hover:bg-primary/90"
           onClick={() => emblaApi?.scrollNext()}
           aria-label="Siguiente diapositiva"
         >

@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { MobileDrawer } from "../MobileDrawer";
+import DarkModeSwitch from "./DarkModeSwitch";
 
 export default function Header() {
   const { data: session, status: authStatus } = useSession();
@@ -52,19 +53,18 @@ export default function Header() {
   };
 
   return (
-    <header className="border-b sticky top-0 bg-background z-50">
+    <header className="border-b border-border sticky top-0 bg-background z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center gap-4">
           {!showMobileSearch && (
             <Link href="/" className="text-2xl font-bold shrink-0">
-              Logo
+              <img src="/logoQuantum.png" alt="Quantum Store" className="h-10 w-25" />
             </Link>
           )}
 
           <div
-            className={`relative ${
-              showMobileSearch ? "flex-1" : "hidden sm:block flex-1 max-w-xl"
-            }`}
+            className={`relative ${showMobileSearch ? "flex-1" : "hidden sm:block flex-1 max-w-xl"
+              }`}
           >
             <Input
               type="search"
@@ -147,6 +147,8 @@ export default function Header() {
                     </span>
                   )}
                 </Link>
+
+                <DarkModeSwitch />
 
                 {/* Menú móvil */}
                 <MobileDrawer />

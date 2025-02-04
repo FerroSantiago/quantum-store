@@ -67,7 +67,7 @@ const ProductFilters = ({ products, onFilterChange }: ProductFiltersProps) => {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-600 whitespace-nowrap">
+      <span className="text-sm text-secondary whitespace-nowrap">
         Ordenar por:
       </span>
       <div className="w-[240px]">
@@ -93,16 +93,14 @@ const ProductFilters = ({ products, onFilterChange }: ProductFiltersProps) => {
               variant="ghost"
               size="icon"
               onClick={toggleFeatured}
-              className={`ml-2 transition-colors ${
-                showFeatured
-                  ? "text-yellow-400 hover:text-yellow-500"
-                  : "text-gray-400 hover:text-gray-500"
-              }`}
+              className={`ml-2 transition-colors ${showFeatured
+                ? "text-yellow-400 hover:text-yellow-500"
+                : "text-gray-400 hover:text-gray-500"
+                }`}
             >
               <Star
-                className={`h-5 w-5 ${
-                  showFeatured ? "fill-yellow-400" : "fill-none"
-                }`}
+                className={`h-5 w-5 ${showFeatured ? "fill-yellow-400" : "fill-none"
+                  }`}
               />
             </FeaturedFilterButton>
           </TooltipTrigger>

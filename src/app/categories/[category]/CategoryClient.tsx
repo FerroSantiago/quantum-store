@@ -35,11 +35,11 @@ export default function CategoryClient({ initialProducts, category }: CategoryCl
           <h1 className="text-3xl font-bold">
             Productos de {categoryName}
           </h1>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-secondary mt-2">
             Mostrando {displayedProducts.length} de {filteredProducts.length} productos
           </p>
         </div>
-        <ProductFilters 
+        <ProductFilters
           products={initialProducts}
           onFilterChange={products => {
             setFilteredProducts(products)
@@ -49,7 +49,7 @@ export default function CategoryClient({ initialProducts, category }: CategoryCl
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {displayedProducts.map(product => (
-          <ProductCard 
+          <ProductCard
             key={product.id}
             {...product}
           />

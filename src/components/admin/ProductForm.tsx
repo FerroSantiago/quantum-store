@@ -45,7 +45,7 @@ export default function ProductForm({
   };
 
   const inputClasses =
-    "w-full rounded-md border bg-transparent p-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent";
+    "w-full rounded-md border border-border bg-transparent p-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
@@ -153,7 +153,7 @@ export default function ProductForm({
             id="featured"
             name="featured"
             defaultChecked={initialData?.featured}
-            className="rounded border-gray-300 text-primary focus:ring-primary"
+            className="rounded focus:ring-primary"
           />
           <label htmlFor="featured" className="text-sm font-medium">
             Producto destacado
@@ -165,14 +165,14 @@ export default function ProductForm({
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="px-4 py-2 border border-border rounded-md"
         >
           {isLoading ? "Guardando..." : isEditing ? "Actualizar" : "Crear"}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2 border rounded-md hover:bg-muted transition-colors"
+          className="px-4 py-2 border border-border rounded-md"
         >
           Cancelar
         </button>

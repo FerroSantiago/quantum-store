@@ -30,7 +30,7 @@ export default function SearchInput({ placeholder }: SearchInputProps) {
         placeholder={placeholder}
         defaultValue={searchParams.get("search")?.toString()}
         onChange={(e) => handleSearch(e.target.value)}
-        className="w-full md:max-w-sm rounded-md border bg-transparent p-2 pr-8 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        className="w-full md:max-w-sm rounded-md border border-border bg-transparent p-2 pr-8 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
       />
       <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
     </div>

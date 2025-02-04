@@ -49,13 +49,13 @@ export default function ProductsTable({ products }: { products: Product[] }) {
         <div className="flex justify-end gap-2">
           <Link
             href={`/admin/products/${product.id}/edit`}
-            className="p-2 hover:bg-muted rounded-md"
+            className="p-2"
           >
             <Pencil className="h-4 w-4" />
           </Link>
           <button
             onClick={() => handleDelete(product.id)}
-            className="p-2 hover:bg-muted rounded-md text-red-500 hover:bg-red-50"
+            className="p-2 text-red-500"
             aria-label="Eliminar producto"
           >
             <Trash2 className="h-4 w-4" />

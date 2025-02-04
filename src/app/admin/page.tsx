@@ -7,21 +7,21 @@ export default function AdminPage() {
         <Link
           key={"Products"}
           href={"/admin/products"}
-          className="block p-6 rounded-lg border hover:shadow-lg transition-shadow"
+          className="block p-6 rounded-lg border border-border"
         >
           <h2 className="text-xl font-semibold">Productos</h2>
         </Link>
         <Link
           key={"Users"}
           href={"/admin/users"}
-          className="block p-6 rounded-lg border hover:shadow-lg transition-shadow"
+          className="block p-6 rounded-lg border border-border"
         >
           <h2 className="text-xl font-semibold">Usuarios</h2>
         </Link>
         <Link
           key={"Orders"}
           href={"/admin/orders"}
-          className="block p-6 rounded-lg border hover:shadow-lg transition-shadow"
+          className="block p-6 rounded-lg border border-border"
         >
           <h2 className="text-xl font-semibold">Pedidos</h2>
         </Link>

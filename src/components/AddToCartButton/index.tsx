@@ -31,7 +31,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
       className={cn(
         "flex items-center gap-2 hover:bg-white/10",
         "px-4 py-2 rounded-md",
-        "border border-white text-white",
+        "border border-border",
         "transition-colors"
       )}
       onClick={handleClick}

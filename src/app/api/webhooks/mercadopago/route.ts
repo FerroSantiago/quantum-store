@@ -151,16 +151,6 @@ export async function POST(request: Request) {
     });
     console.log('✅ Payment updated:', updatedPayment);
  
-    // Si el pago está aprobado, actualizar la orden
-    if (paymentStatus === 'APPROVED') {
-      console.log('🔄 Updating order status to COMPLETED...');
-      const updatedOrder = await prisma.order.update({
-        where: { id: existingPayment.orderId },
-        data: { status: 'COMPLETED' }
-      });
-      console.log('✅ Order updated:', updatedOrder);
-    }
- 
     return NextResponse.json({ 
       success: true,
       status: paymentStatus,
