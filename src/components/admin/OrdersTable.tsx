@@ -81,7 +81,7 @@ export default function OrdersTable({
         );
 
         toast.success("Estado actualizado");
-      } catch (error) {
+      } catch {
         toast.error("Error al actualizar");
       } finally {
         setIsUpdating(null);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -58,7 +59,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {!showMobileSearch && (
             <Link href="/" className="text-2xl font-bold shrink-0">
-              <img src="/logoQuantum.png" alt="Quantum Store" className="h-10 w-25" />
+              <Image src="/logoQuantum.png" alt="Quantum Store" className="h-10 w-25" />
             </Link>
           )}
 
