@@ -44,7 +44,7 @@ export default function ProductView({ product }: ProductViewProps) {
               {/* Información del producto */}
               <div className="flex-1">
                 <p className="text-sm text-gray-500 mb-2">
-                  {product.categoryName}
+                  {product.category}
                 </p>
                 <div className="flex items-center gap-2 mb-4">
                   <h1 className="text-3xl font-bold">{product.name}</h1>

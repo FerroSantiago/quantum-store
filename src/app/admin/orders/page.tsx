@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import OrdersTable from "@/components/admin/OrdersTable";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { OrderStatus } from "@/lib/types";
 
 export default async function AdminOrdersPage() {
   const session = await auth();
@@ -39,14 +40,15 @@ export default async function AdminOrdersPage() {
   // Convertir las fechas a string
   const orders = rawOrders.map((order) => ({
     ...order,
+    status: order.status as OrderStatus,
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
     payment: order.payment
       ? {
-          ...order.payment,
-          createdAt: order.payment.createdAt.toISOString(),
-          updatedAt: order.payment.updatedAt.toISOString(),
-        }
+        ...order.payment,
+        createdAt: order.payment.createdAt.toISOString(),
+        updatedAt: order.payment.updatedAt.toISOString(),
+      }
       : null,
     orderEvents: order.orderEvents.map((event) => ({
       ...event,

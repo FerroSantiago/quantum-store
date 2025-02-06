@@ -10,6 +10,7 @@ import { toast } from "sonner";
 interface FormErrors {
   name?: string;
   email?: string;
+  cuit?: string;
   password?: string;
   confirmPassword?: string;
   form?: string;
@@ -35,12 +36,18 @@ export default function RegisterPage() {
   const validateForm = (formData: FormData): boolean => {
     const newErrors: FormErrors = {};
     const email = formData.get("email") as string;
+    const cuit = formData.get("cuit") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
     // Validación de email
     if (!email || !email.includes("@")) {
       newErrors.email = "Email inválido";
+    }
+
+    //Validacion de cuit
+    if (!cuit) {
+      newErrors.cuit = "Cuit inválido";
     }
 
     // Validación de contraseña
@@ -72,6 +79,7 @@ export default function RegisterPage() {
     try {
       const registerData = {
         email: formData.get("email") as string,
+        cuit: formData.get("cuit") as string,
         password: formData.get("password") as string,
         name: formData.get("name") as string,
       };
@@ -140,6 +148,13 @@ export default function RegisterPage() {
             required
             disabled={loading}
             error={errors.email}
+          />
+          <FormInput
+            id="cuit"
+            label="CUIT"
+            required
+            disabled={loading}
+            error={errors.cuit}
           />
           <FormInput
             id="password"

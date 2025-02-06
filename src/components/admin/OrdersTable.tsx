@@ -1,48 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Package, Truck, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Order, OrderStatus } from "@/lib/types";
+import { Package, Truck, CheckCircle, XCircle, Loader2, Clock } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-
-interface OrderItem {
-  product: {
-    name: string;
-    price: number;
-  };
-  quantity: number;
-}
-
-interface Order {
-  id: string;
-  user: {
-    email: string;
-    name: string | null;
-  };
-  total: number;
-  status: OrderStatus;
-  payment: {
-    status: string;
-  } | null;
-  trackingNumber: string | null;
-  items: OrderItem[];
-  createdAt: string;
-}
-
-type OrderStatus =
-  | "PENDING"
-  | "PROCESSING"
-  | "SHIPPED"
-  | "DELIVERED"
-  | "COMPLETED"
-  | "CANCELLED";
 
 const OrderStatusConfig = {
   PENDING: {
     label: "Pendiente",
     style: "bg-yellow-100 text-yellow-800",
-    icon: null,
+    icon: Clock,
   },
   PROCESSING: {
     label: "Procesando",
@@ -93,39 +62,33 @@ export default function OrdersTable({
     );
   }, [orders, searchTerm]);
 
-  const handleStatusUpdate = async (
-    orderId: string,
-    newStatus: OrderStatus
-  ) => {
-    setIsUpdating(orderId);
-    try {
-      const response = await fetch(`/api/admin/orders/${orderId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
+  const handleStatusUpdate = useCallback(
+    async (orderId: string, newStatus: OrderStatus) => {
+      setIsUpdating(orderId);
+      try {
+        const response = await fetch(`/api/admin/orders/${orderId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Error al actualizar el estado");
+        if (!response.ok) throw new Error("Error al actualizar");
+
+        setOrders((orders) =>
+          orders.map((order) =>
+            order.id === orderId ? { ...order, status: newStatus } : order
+          )
+        );
+
+        toast.success("Estado actualizado");
+      } catch (error) {
+        toast.error("Error al actualizar");
+      } finally {
+        setIsUpdating(null);
       }
-
-      // Actualizar la orden en el estado local
-      setOrders((currentOrders) =>
-        currentOrders.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
-
-      toast.success("Estado actualizado correctamente");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Error al actualizar el estado");
-    } finally {
-      setIsUpdating(null);
-    }
-  };
+    },
+    [setOrders]
+  );
 
   const StatusBadge = ({ status }: { status: OrderStatus }) => {
     const config = OrderStatusConfig[status];

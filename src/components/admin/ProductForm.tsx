@@ -26,6 +26,16 @@ export default function ProductForm({
     try {
       const formData = new FormData(e.currentTarget);
 
+      const selectedCategoryId = formData.get("category") as string;
+
+      const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
+
+      if (!selectedCategory) {
+        throw new Error("Categoría no válida.");
+      }
+
+      formData.set("category", selectedCategory.id);
+
       if (isEditing && initialData) {
         await updateProduct(initialData.id, formData);
         toast.success("Producto actualizado correctamente");
@@ -120,31 +130,19 @@ export default function ProductForm({
             name="category"
             defaultValue={initialData?.category}
             required
-            className={inputClasses}
-            onChange={(e) => {
-              const categoryInput = document.querySelector(
-                'input[name="categoryName"]'
-              ) as HTMLInputElement;
-              const selectedCategory = categories.find(
-                (cat) => cat.id === e.target.value
-              );
-              if (categoryInput && selectedCategory) {
-                categoryInput.value = selectedCategory.name;
-              }
-            }}
+            className={`${inputClasses} dark:bg-background dark:text-foreground dark:border-border`}
           >
-            <option value="">Seleccionar categoría</option>
+            <option value="" className="bg-background text-foreground">Seleccionar categoría</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.id}>
+              <option
+                key={category.id}
+                value={category.id}
+                className="bg-background text-foreground"
+              >
                 {category.name}
               </option>
             ))}
           </select>
-          <input
-            type="hidden"
-            name="categoryName"
-            defaultValue={initialData?.categoryName}
-          />
         </div>
 
         <div className="flex items-center gap-2">

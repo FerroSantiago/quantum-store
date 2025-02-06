@@ -61,8 +61,7 @@ export default function SearchResults() {
                 key={product.id}
                 onClick={() =>
                   handleProductClick(
-                    `/categories/${product.category}/${slugify(product.name)}-${
-                      product.id
+                    `/categories/${product.category}/${slugify(product.name)}-${product.id
                     }`
                   )
                 }
@@ -84,7 +83,7 @@ export default function SearchResults() {
                         {product.name}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {product.categoryName}
+                        {product.category}
                       </p>
                       {status === "authenticated" ? (
                         <p className="text-sm font-medium text-primary">

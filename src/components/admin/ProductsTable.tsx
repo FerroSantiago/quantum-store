@@ -35,7 +35,7 @@ export default function ProductsTable({ products }: { products: Product[] }) {
     {
       key: "category",
       header: "Categoría",
-      cell: (product: Product) => product.categoryName,
+      cell: (product: Product) => product.category,
     },
     {
       key: "featured",

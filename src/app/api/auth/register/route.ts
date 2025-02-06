@@ -6,11 +6,11 @@ export async function POST(request: Request) {
   try {
     await prisma.$connect()
     const data = await request.json()
-    const { email, password, name } = data
+    const { email, name, cuit, password } = data
 
-    if (!email || !password) {
+    if (!email || !password || !name || !cuit) {
       return NextResponse.json(
-        { error: "Email y contraseña son requeridos" },
+        { error: "Email, contraseña, nombre y cuit son requeridos" },
         { status: 400 }
       )
     }
@@ -34,8 +34,9 @@ export async function POST(request: Request) {
     const user = await prisma.user.create({
       data: {
         email,
+        name,
+        cuit,
         password: hashedPassword,
-        name: name || null, // Si name es undefined, guardamos null
         role: 'USER'
       }
     })
@@ -46,7 +47,8 @@ export async function POST(request: Request) {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name
+        name: user.name,
+        cuit: user.cuit,
       }
     })
   } catch (error) {

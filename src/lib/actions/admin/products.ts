@@ -12,10 +12,9 @@ export async function createProduct(formData: FormData) {
   const description = formData.get('description') as string
   const image = formData.get('image') as string
   const category = formData.get('category') as string
-  const categoryName = formData.get('categoryName') as string
   const featured = formData.get('featured') === 'true'
 
-  if (!name || !price || !description || !image || !category || !categoryName) {
+  if (!name || !price || !description || !image || !category) {
     throw new Error('Todos los campos son requeridos')
   }
 
@@ -27,7 +26,6 @@ export async function createProduct(formData: FormData) {
         description,
         image,
         category,
-        categoryName,
         featured
       }
     })
@@ -48,7 +46,6 @@ export async function updateProduct(productId: string, formData: FormData) {
   const description = formData.get('description') as string
   const image = formData.get('image') as string
   const category = formData.get('category') as string
-  const categoryName = formData.get('categoryName') as string
   const featured = formData.get('featured') === 'true'
 
   try {
@@ -60,7 +57,6 @@ export async function updateProduct(productId: string, formData: FormData) {
         description,
         image,
         category,
-        categoryName,
         featured
       }
     })

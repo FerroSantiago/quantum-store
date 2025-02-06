@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { Order } from "@/lib/types";
 
 interface OrderItem {
   id: string;
@@ -13,18 +14,6 @@ interface OrderItem {
   };
   quantity: number;
   price: number;
-}
-
-interface Order {
-  id: string;
-  total: number;
-  status: string;
-  createdAt: string;
-  items: OrderItem[];
-  payment: {
-    status: string;
-    payment_id: string | null;
-  } | null;
 }
 
 export default function OrdersPage() {
@@ -108,13 +97,12 @@ export default function OrdersPage() {
                 <p className="text-sm">
                   Estado:{" "}
                   <span
-                    className={`font-medium ${
-                      order.status === "COMPLETED"
+                    className={`font-medium ${order.status === "COMPLETED"
                         ? "text-green-600"
                         : order.status === "CANCELLED"
-                        ? "text-red-600"
-                        : "text-yellow-600"
-                    }`}
+                          ? "text-red-600"
+                          : "text-yellow-600"
+                      }`}
                   >
                     {order.status}
                   </span>
@@ -144,13 +132,12 @@ export default function OrdersPage() {
                 <p>
                   Estado del pago:{" "}
                   <span
-                    className={`font-medium ${
-                      order.payment.status === "APPROVED"
+                    className={`font-medium ${order.payment.status === "APPROVED"
                         ? "text-green-600"
                         : order.payment.status === "REJECTED"
-                        ? "text-red-600"
-                        : "text-yellow-600"
-                    }`}
+                          ? "text-red-600"
+                          : "text-yellow-600"
+                      }`}
                   >
                     {order.payment.status}
                   </span>

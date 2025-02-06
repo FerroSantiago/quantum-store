@@ -1,10 +1,5 @@
 import Link from 'next/link'
-
-const sections = [
-  { name: 'Cosmeticos', href: '/categories/cosmeticos/' },
-  { name: 'Casa', href: '/categories//casa' },
-  { name: 'Salud', href: '/categories//salud' },
-]
+import { categories } from '@/lib/constants'
 
 interface NavigationProps {
   variant?: 'horizontal' | 'vertical'
@@ -15,14 +10,14 @@ export default function Navigation({ variant = 'horizontal', onNavigate }: Navig
   if (variant === 'vertical') {
     return (
       <nav className="space-y-2">
-        {sections.map((section, index) => (
+        {categories.map((category, index) => (
           <Link
             key={index}
-            href={section.href}
+            href={category.href}
             className="block py-2 text-sm font-medium hover:text-primary transition-colors"
             onClick={onNavigate}
           >
-            {section.name}
+            {category.name}
           </Link>
         ))}
       </nav>
@@ -33,13 +28,13 @@ export default function Navigation({ variant = 'horizontal', onNavigate }: Navig
     <nav className="border-t border-border bg-muted overflow-x-auto hidden sm:block">
       <div className="container mx-auto px-4">
         <ul className="flex justify-center space-x-8 whitespace-nowrap">
-          {sections.map((section, index) => (
+          {categories.map((category, index) => (
             <li key={index}>
               <Link
-                href={section.href}
+                href={category.href}
                 className="block py-2 text-sm font-medium hover:text-primary"
               >
-                {section.name}
+                {category.name}
               </Link>
             </li>
           ))}
