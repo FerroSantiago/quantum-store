@@ -164,7 +164,7 @@ export default function CheckoutSuccessPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <Card className="max-w-lg mx-auto p-6">
+      <Card className="max-w-lg bg-border mx-auto p-6">
         <div className="text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-4">
@@ -172,14 +172,14 @@ export default function CheckoutSuccessPage() {
               ? "¡Pago Exitoso!"
               : "Procesando Pago..."}
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6">
             {orderDetails?.paymentDetails?.status === "APPROVED"
               ? "Tu orden ha sido procesada correctamente."
               : "Estamos verificando tu pago..."}
           </p>
 
           {orderDetails?.paymentDetails && (
-            <div className="text-left bg-gray-50 p-4 rounded-md mb-6 space-y-4">
+            <div className="text-left bg-secondary p-4 rounded-md mb-6 space-y-4">
               <div>
                 <p className="mb-2">
                   <span className="font-semibold">ID de Pago:</span>{" "}
@@ -220,13 +220,13 @@ export default function CheckoutSuccessPage() {
           <div className="space-y-4">
             <Link
               href="/profile/orders"
-              className="block w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition-colors"
+              className="block w-full py-2 px-4 rounded hover:bg-background  transition-colors"
             >
               Ver mis órdenes
             </Link>
             <Link
               href="/"
-              className="block w-full border border-gray-300 py-2 px-4 rounded hover:bg-gray-50 transition-colors"
+              className="block w-full border border-secondary py-2 px-4 rounded hover:bg-background transition-colors"
             >
               Volver a la tienda
             </Link>

@@ -6,16 +6,6 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Order } from "@/lib/types";
 
-interface OrderItem {
-  id: string;
-  product: {
-    name: string;
-    price: number;
-  };
-  quantity: number;
-  price: number;
-}
-
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,10 +88,10 @@ export default function OrdersPage() {
                   Estado:{" "}
                   <span
                     className={`font-medium ${order.status === "COMPLETED"
-                        ? "text-green-600"
-                        : order.status === "CANCELLED"
-                          ? "text-red-600"
-                          : "text-yellow-600"
+                      ? "text-green-600"
+                      : order.status === "CANCELLED"
+                        ? "text-red-600"
+                        : "text-blue-600"
                       }`}
                   >
                     {order.status}
@@ -133,10 +123,10 @@ export default function OrdersPage() {
                   Estado del pago:{" "}
                   <span
                     className={`font-medium ${order.payment.status === "APPROVED"
-                        ? "text-green-600"
-                        : order.payment.status === "REJECTED"
-                          ? "text-red-600"
-                          : "text-yellow-600"
+                      ? "text-green-600"
+                      : order.payment.status === "REJECTED"
+                        ? "text-red-600"
+                        : "text-yellow-600"
                       }`}
                   >
                     {order.payment.status}

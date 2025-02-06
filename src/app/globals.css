@@ -6,14 +6,14 @@
   --background: #f0eefd;
   --foreground: #171717;
   --border: #d3d8df;
-  --secondary: #6d7b8f;
+  --secondary: #afb4bb;
 }
 
 .dark {
   --background: #1c1a26;
   --foreground: #f0eefd;
-  --border: #454d56;
-  --secondary: #91959b;
+  --border: #42464b;
+  --secondary: #56595e;
 }
 
 body {
