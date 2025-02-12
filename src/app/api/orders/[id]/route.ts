@@ -2,13 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-type Context = {
-  params: { id: string };
-};
-
 export async function GET(
-  req: NextRequest,
-  context: Context
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   const session = await auth();
 
@@ -17,7 +13,7 @@ export async function GET(
   }
 
   try {
-    const { id } = context.params;
+    const { id } = await params;
 
     const order = await prisma.order.findUnique({
       where: {
