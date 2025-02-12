@@ -1,45 +1,34 @@
-import { OrderStatus as PrismaOrderStatus } from "@prisma/client";
+import { OrderStatus as PrismaOrderStatus, PaymentStatus as PrismaPaymentStatus } from "@prisma/client";
 
 export interface Product {
- id: string
- name: string
- price: number
- description: string
- image: string
- category: string
- featured?: boolean 
+  id: string
+  name: string
+  price: number
+  description: string
+  image: string
+  category: string
+  featured?: boolean
 }
 
 export interface Category {
- id: string
- name: string
- href: string
-}
-
-export enum Role {
-  USER = 'USER',
-  ADMIN = 'ADMIN'
- }
-
-export enum UserStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED'
+  id: string
+  name: string
+  href: string
 }
 
 export interface User {
-  id: string;
-  email: string;
-  name: string;
-  cuit: string;
-  role: Role;
-  status: UserStatus;
+  id: string
+  email: string
+  name: string | null
+  cuit: string
+  role: Role
+  status: UserStatus
 }
 
 export interface UserTableItem {
   id: string
   email: string
-  name: string
+  name: string | null
   cuit: string
   role: Role
   status: UserStatus
@@ -47,30 +36,47 @@ export interface UserTableItem {
 }
 
 export interface OrderItem {
-  id: string;
+  id: string
   product: {
-    name: string;
-    price: number;
-  };
-  quantity: number;
-  price: number;
+    name: string
+    price: number
+  }
+  quantity: number
+  price: number
 }
 
 export interface Order {
-  id: string;
+  id: string
   user: {
-    email: string;
-    name: string | null;
+    email: string
+    name: string | null
   };
-  total: number;
-  status: PrismaOrderStatus;
-  payment: {
-    status: string;
-    payment_id?: string | null;
-  } | null;
-  trackingNumber: string | null;
-  items: OrderItem[];
-  createdAt: string;
+  totalAmount: number
+  status: PrismaOrderStatus
+  payments: Payment[]
+  notes?: string | null
+  items: OrderItem[]
+  createdAt: string
 }
 
-export { PrismaOrderStatus as OrderStatus };
+export interface Payment {
+  id: string
+  orderId: string
+  status: PrismaPaymentStatus
+  amountPaid: number
+  receiptURL?: string | null
+  createdAt: string
+}
+
+export enum Role {
+  USER = 'USER',
+  ADMIN = 'ADMIN'
+}
+
+export enum UserStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
+}
+
+export { PrismaOrderStatus as OrderStatus, PrismaPaymentStatus as PaymentStatus };

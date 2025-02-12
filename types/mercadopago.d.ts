@@ -1,3 +1,4 @@
+/*
 declare global {
   interface Window {
     MercadoPago: new (
@@ -19,3 +20,4 @@ declare global {
 }
 
 export {};
+*/

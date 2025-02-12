@@ -7,6 +7,7 @@
   --foreground: #171717;
   --border: #d3d8df;
   --secondary: #afb4bb;
+  --shadow-color: rgba(0, 0, 0, 0.2);
 }
 
 .dark {
@@ -14,6 +15,7 @@
   --foreground: #f0eefd;
   --border: #42464b;
   --secondary: #56595e;
+  --shadow-color: rgba(255, 255, 255, 0.2);
 }
 
 body {

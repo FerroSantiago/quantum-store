@@ -25,7 +25,7 @@ export default async function AdminOrdersPage() {
           product: true,
         },
       },
-      payment: true,
+      payments: true,
       orderEvents: {
         orderBy: {
           createdAt: "desc",
@@ -43,13 +43,11 @@ export default async function AdminOrdersPage() {
     status: order.status as OrderStatus,
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
-    payment: order.payment
-      ? {
-        ...order.payment,
-        createdAt: order.payment.createdAt.toISOString(),
-        updatedAt: order.payment.updatedAt.toISOString(),
-      }
-      : null,
+    payments: order.payments.map((payment) => ({
+      ...payment,
+      createdAt: payment.createdAt.toISOString(),
+      updatedAt: payment.updatedAt.toISOString(),
+    })), // ✅ Ahora maneja múltiples pagos
     orderEvents: order.orderEvents.map((event) => ({
       ...event,
       createdAt: event.createdAt.toISOString(),

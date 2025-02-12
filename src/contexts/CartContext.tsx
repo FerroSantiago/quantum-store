@@ -37,6 +37,7 @@ interface CartContextType {
   updateQuantity: (cartItemId: string, quantity: number) => Promise<void>;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  clearCart: () => void
   isLoading: boolean;
 }
 
@@ -136,9 +137,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         currentItems.map((item) =>
           item.id === cartItemId
             ? {
-                ...item,
-                quantity: updatedItem.quantity,
-              }
+              ...item,
+              quantity: updatedItem.quantity,
+            }
             : item
         )
       );
@@ -159,6 +160,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const clearCart = () => {
+    setItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -168,6 +173,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         getTotalItems,
         getTotalPrice,
+        clearCart,
         isLoading,
       }}
     >

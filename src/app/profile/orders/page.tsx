@@ -83,7 +83,7 @@ export default function OrdersPage() {
                 </p>
               </div>
               <div className="mt-2 md:mt-0">
-                <p className="font-medium">Total: ${order.total.toFixed(2)}</p>
+                <p className="font-medium">Total: ${order.totalAmount.toFixed(2)}</p>
                 <p className="text-sm">
                   Estado:{" "}
                   <span
@@ -117,26 +117,41 @@ export default function OrdersPage() {
               </div>
             </div>
 
-            {order.payment && (
+            {order.payments && order.payments.length > 0 && (
               <div className="border-t mt-4 pt-4 text-sm">
                 <p>
                   Estado del pago:{" "}
                   <span
-                    className={`font-medium ${order.payment.status === "APPROVED"
-                      ? "text-green-600"
-                      : order.payment.status === "REJECTED"
+                    className={`font-medium ${order.payments.some((p) => p.status === "REJECTED")
                         ? "text-red-600"
-                        : "text-yellow-600"
+                        : order.payments.some((p) => p.status === "PARTIALLY_PAID")
+                          ? "text-yellow-600"
+                          : order.payments.every((p) => p.status === "COMPLETED")
+                            ? "text-green-600"
+                            : "text-gray-600"
                       }`}
                   >
-                    {order.payment.status}
+                    {order.payments.some((p) => p.status === "REJECTED")
+                      ? "REJECTED"
+                      : order.payments.some((p) => p.status === "PARTIALLY_PAID")
+                        ? "PARTIALLY PAID"
+                        : order.payments.every((p) => p.status === "COMPLETED")
+                          ? "COMPLETED"
+                          : "PENDING"}
                   </span>
                 </p>
-                {order.payment.payment_id && (
-                  <p className="text-gray-500">
-                    ID de Pago: {order.payment.payment_id}
-                  </p>
-                )}
+
+                {/* Mostrar ID de cada pago si existe */}
+                {order.payments.map((payment) => (
+                  payment.receiptURL && (
+                    <p key={payment.id} className="text-gray-500">
+                      Comprobante:{" "}
+                      <a href={payment.receiptURL} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                        Ver comprobante
+                      </a>
+                    </p>
+                  )
+                ))}
               </div>
             )}
 

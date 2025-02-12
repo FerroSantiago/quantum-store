@@ -20,7 +20,7 @@ export async function GET() {
             product: true,
           },
         },
-        payment: true,
+        payments: true,
       },
       orderBy: {
         createdAt: "desc",

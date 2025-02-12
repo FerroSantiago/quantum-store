@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 type Context = {
-  params: Promise<{ id: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: { id: string }
 };
 
 export async function GET(
@@ -11,9 +10,8 @@ export async function GET(
   context: Context
 ): Promise<NextResponse> {
   try {
-    const params = await context.params;
-    const { id } = params;
-    
+    const { id } = context.params;
+
     console.log('🔍 Fetching payment:', id);
 
     const payment = await prisma.payment.findUnique({
@@ -25,7 +23,8 @@ export async function GET(
               include: {
                 product: true
               }
-            }
+            },
+            user: true,
           }
         }
       }

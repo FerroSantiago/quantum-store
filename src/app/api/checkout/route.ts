@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { preferenceClient } from '@/lib/mercadopago';
+// import { preferenceClient } from '@/lib/mercadopago'; Comentado MercadoPago
 
 export async function POST() {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     return NextResponse.json(
       { error: 'Unauthorized' },
@@ -34,7 +34,7 @@ export async function POST() {
     const order = await prisma.order.create({
       data: {
         userId: session.user.id,
-        total,
+        totalAmount: total,
         items: {
           create: cartItems.map(item => ({
             productId: item.productId,
@@ -45,14 +45,15 @@ export async function POST() {
       }
     });
 
-    const payment = await prisma.payment.create({
+    await prisma.payment.create({
       data: {
         orderId: order.id,
-        amount: total,
+        amountPaid: total,
         status: 'PENDING'
       }
     });
 
+    /* Código de MercadoPago comentado
     const preference = await preferenceClient.create({
       body: {
         items: cartItems.map(item => ({
@@ -78,13 +79,14 @@ export async function POST() {
         preference_id: preference.id,
       }
     });
+    */
 
     await prisma.cartItem.deleteMany({
       where: { userId: session.user.id }
     });
 
-    return NextResponse.json({ 
-      preferenceId: preference.id
+    return NextResponse.json({
+      // preferenceId: preference.id  Comentado para evitar dependencia de MercadoPago
     });
 
   } catch (error) {

@@ -1,3 +1,4 @@
+/*
 import MercadoPagoConfig, { Payment, Preference } from 'mercadopago';
 
 const config = new MercadoPagoConfig({ 
@@ -6,3 +7,4 @@ const config = new MercadoPagoConfig({
 
 export const paymentClient = new Payment(config);
 export const preferenceClient = new Preference(config);
+*/

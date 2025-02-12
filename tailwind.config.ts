@@ -15,6 +15,9 @@ export default {
         border: "var(--border)",
         secondary: "var(--secondary)",
       },
+      boxShadow: {
+        custom: "0 2px 5px var(--shadow-color)",
+      },
       keyframes: {
         slideInRight: {
           '0%': { transform: 'translateX(100%)' },

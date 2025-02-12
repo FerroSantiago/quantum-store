@@ -9,6 +9,7 @@ interface AuthUser {
   id: string
   email: string
   name: string | null
+  cuit: string
   role: Role
   status: UserStatus
 }
@@ -18,20 +19,20 @@ export const authConfig: NextAuthConfig = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { 
-          label: "Email", 
+        email: {
+          label: "Email",
           type: "email",
           placeholder: "ejemplo@email.com"
         },
-        password: { 
-          label: "Contraseña", 
-          type: "password" 
+        password: {
+          label: "Contraseña",
+          type: "password"
         }
       },
       async authorize(credentials): Promise<AuthUser | null> {
-        const { email, password } = credentials as { 
-          email: string, 
-          password: string 
+        const { email, password } = credentials as {
+          email: string,
+          password: string
         }
 
         if (!email || !password) {
@@ -56,6 +57,7 @@ export const authConfig: NextAuthConfig = {
           id: user.id,
           email: user.email,
           name: user.name,
+          cuit: user.cuit,
           role: user.role,
           status: user.status
         }

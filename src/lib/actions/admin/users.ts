@@ -7,7 +7,7 @@ import { UserStatus } from '@prisma/client'
 
 export async function updateUserStatus(userId: string, status: UserStatus) {
   await checkAdminRole()
-  
+
   try {
     await prisma.user.update({
       where: { id: userId },
@@ -25,7 +25,7 @@ export async function updateUserStatus(userId: string, status: UserStatus) {
 
 export async function getUsers() {
   await checkAdminRole()
-  
+
   return prisma.user.findMany({
     orderBy: {
       createdAt: 'desc'
@@ -34,6 +34,7 @@ export async function getUsers() {
       id: true,
       email: true,
       name: true,
+      cuit: true,
       role: true,
       status: true,
       createdAt: true

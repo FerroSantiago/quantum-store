@@ -19,7 +19,7 @@ export function slugify(text: string): string {
 
 export function extractIdFromSlug(slug: string): string {
   const id = slug.slice(-24)
-  
+
   if (!/^[0-9a-f]{24}$/i.test(id)) {
     throw new Error('ID no válido en el slug')
   }

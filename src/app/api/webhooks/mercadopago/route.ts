@@ -1,3 +1,4 @@
+/*
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { paymentClient } from '@/lib/mercadopago';
@@ -165,3 +166,5 @@ export async function POST(request: Request) {
     }, { status: 500 });
   }
  }
+
+ */

@@ -59,7 +59,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           {!showMobileSearch && (
             <Link href="/" className="text-2xl font-bold shrink-0">
-              <Image src="/logoQuantum.png" alt="Quantum Store" className="h-10 w-25" />
+              <Image src="/logoQuantum.png" alt="Quantum Store" width={125} height={40} />
             </Link>
           )}
 

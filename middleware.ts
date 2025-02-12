@@ -16,7 +16,7 @@ export default auth((req: NextRequest) => {
   // Cast req a nuestro tipo personalizado
   const request = req as RequestWithAuth
   const isAuthenticated = !!request.auth
-  const isAccessingProtectedRoute = 
+  const isAccessingProtectedRoute =
     request.nextUrl.pathname.startsWith('/profile') ||
     request.nextUrl.pathname.startsWith('/dashboard') ||
     request.nextUrl.pathname.startsWith('/admin')
@@ -25,9 +25,9 @@ export default auth((req: NextRequest) => {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  if (isAuthenticated && 
-      request.nextUrl.pathname.startsWith('/admin') && 
-      request.auth?.user?.role !== 'ADMIN') {
+  if (isAuthenticated &&
+    request.nextUrl.pathname.startsWith('/admin') &&
+    request.auth?.user?.role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/', request.url))
   }
 

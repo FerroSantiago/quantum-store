@@ -3,8 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 type Context = {
-  params: Promise<{ id: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: { id: string };
 };
 
 export async function GET(
@@ -18,8 +17,7 @@ export async function GET(
   }
 
   try {
-    const params = await context.params;
-    const { id } = params;
+    const { id } = context.params;
 
     const order = await prisma.order.findUnique({
       where: {
@@ -32,7 +30,10 @@ export async function GET(
             product: true,
           },
         },
-        payment: true,
+        payments: true,
+        orderEvents: {
+          orderBy: { createdAt: "desc" },
+        }
       },
     });
 

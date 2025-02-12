@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const { items, updateQuantity, removeFromCart, getTotalPrice } = useCart();
-  const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
 
+  /*
   useEffect(() => {
     // Cargar el script de MercadoPago
     const script = document.createElement("script");
@@ -24,6 +22,7 @@ export default function CartPage() {
     };
   }, []);
 
+
   const handleCheckout = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
@@ -34,12 +33,12 @@ export default function CartPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Error al procesar el pago");
+        throw new Error("Error al procesar la peticion");
       }
 
       const { preferenceId } = await response.json();
 
-      if (!window.MercadoPago) {
+      *if (!window.MercadoPago) {
         throw new Error("MercadoPago SDK no está cargado");
       }
 
@@ -67,16 +66,17 @@ export default function CartPage() {
       setIsProcessing(false);
     }
   };
+  */
 
   if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-8">Carrito de Compras</h1>
-        <div className="text-center">
-          <p className="mb-4">No hay items en el carrito</p>
+        <div className="mt-[150px] text-center">
+          <p className="text-2xl mb-4">No hay items en el carrito</p>
           <button
             onClick={() => router.push("/")}
-            className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 transition-colors"
+            className="text-xl px-6 py-2 rounded-md hover:bg-border transition-colors"
           >
             Volver a la tienda
           </button>
@@ -114,7 +114,6 @@ export default function CartPage() {
                   <div className="flex items-center gap-2 mt-2">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      disabled={isProcessing}
                       className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
                     >
                       <Minus className="h-4 w-4" />
@@ -124,7 +123,6 @@ export default function CartPage() {
 
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      disabled={isProcessing}
                       className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
                     >
                       <Plus className="h-4 w-4" />
@@ -132,7 +130,6 @@ export default function CartPage() {
 
                     <button
                       onClick={() => removeFromCart(item.id)}
-                      disabled={isProcessing}
                       className="ml-auto p-1 hover:bg-gray-100 rounded text-red-500 disabled:opacity-50"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -158,12 +155,12 @@ export default function CartPage() {
               </div>
 
               <div className="cho-container">
+                {/* Botón para redirigir a la nueva página de orden */}
                 <button
-                  onClick={handleCheckout}
-                  disabled={isProcessing}
-                  className="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  onClick={() => router.push("/cart/order")}
+                  className="w-full bg-primary py-2 rounded-md hover:bg-border transition-colors disabled:opacity-50"
                 >
-                  {isProcessing ? "Procesando..." : "Proceder al pago"}
+                  Proceder con el pedido
                 </button>
               </div>
             </div>

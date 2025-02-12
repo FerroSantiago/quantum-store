@@ -40,7 +40,7 @@ export async function PATCH(
             product: true
           }
         },
-        payment: true,
+        payments: true,
       }
     });
 

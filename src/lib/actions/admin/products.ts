@@ -29,7 +29,7 @@ export async function createProduct(formData: FormData) {
         featured
       }
     })
-    
+
     revalidatePath('/admin/products')
     return { success: true, product }
   } catch (error) {
