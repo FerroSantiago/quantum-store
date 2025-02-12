@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-type Context = {
-  params: { id: string }
-};
-
 export async function GET(
-  req: NextRequest,
-  context: Context
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   try {
-    const { id } = context.params;
+    const { id } = await params;
 
     console.log('🔍 Fetching payment:', id);
 
