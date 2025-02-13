@@ -7,7 +7,7 @@ import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
 
@@ -16,7 +16,7 @@ export async function GET(
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Buscar la orden en la base de datos con los pagos asociados
     const order = await prisma.order.findUnique({
