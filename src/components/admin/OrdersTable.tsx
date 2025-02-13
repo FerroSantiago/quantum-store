@@ -3,56 +3,30 @@
 import { useCallback, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Order, OrderStatus, PaymentStatus } from "@/lib/types";
-import { Package, Truck, CheckCircle, XCircle, Loader2, Clock } from "lucide-react";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Package, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
+
 const OrderStatusConfig = {
-  PENDING: {
-    label: "Pendiente",
-    style: "bg-yellow-100 text-yellow-800",
-    icon: Clock,
-  },
-  PROCESSING: {
-    label: "Procesando",
-    style: "bg-blue-100 text-blue-800",
-    icon: Package,
-  },
-  SHIPPED: {
-    label: "Enviado",
-    style: "bg-purple-100 text-purple-800",
-    icon: Truck,
-  },
-  DELIVERED: {
-    label: "Entregado",
-    style: "bg-green-100 text-green-800",
-    icon: CheckCircle,
-  },
-  COMPLETED: {
-    label: "Completado",
-    style: "bg-gray-100 text-gray-800",
-    icon: CheckCircle,
-  },
-  CANCELLED: {
-    label: "Cancelado",
-    style: "bg-red-100 text-red-800",
-    icon: XCircle,
-  },
+  PENDING: { label: "Pendiente", style: "bg-yellow-100 text-yellow-800", icon: Clock },
+  PROCESSING: { label: "Procesando", style: "bg-blue-100 text-blue-800", icon: Package },
+  SHIPPED: { label: "Enviado", style: "bg-purple-100 text-purple-800", icon: Truck },
+  DELIVERED: { label: "Entregado", style: "bg-green-100 text-green-800", icon: CheckCircle },
+  COMPLETED: { label: "Completado", style: "bg-gray-100 text-gray-800", icon: CheckCircle },
+  CANCELLED: { label: "Cancelado", style: "bg-red-100 text-red-800", icon: XCircle },
 } as const;
 
-export default function OrdersTable({
-  initialOrders,
-}: {
-  initialOrders: Order[];
-}) {
+export default function OrdersTable({ initialOrders }: { initialOrders: Order[] }) {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  const [isUpdatingOrder, setIsUpdatingOrder] = useState<string | null>(null);
+  const [isUpdatingPayment, setIsUpdatingPayment] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search")?.toLowerCase();
 
   const filteredOrders = useMemo(() => {
     if (!searchTerm) return orders;
-
     return orders.filter(
       (order) =>
         order.id.toLowerCase().includes(searchTerm) ||
@@ -61,8 +35,8 @@ export default function OrdersTable({
     );
   }, [orders, searchTerm]);
 
-  const handleStatusUpdate = useCallback(async (orderId: string, newStatus: OrderStatus) => {
-    setIsUpdating(orderId);
+  const handleOrderStatusUpdate = useCallback(async (orderId: string, newStatus: OrderStatus) => {
+    setIsUpdatingOrder(orderId);
     try {
       const response = await fetch(`/api/admin/orders/${orderId}`, {
         method: "PATCH",
@@ -70,7 +44,10 @@ export default function OrdersTable({
         body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!response.ok) throw new Error("Error al actualizar");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al actualizar la orden");
+      }
 
       setOrders((orders) =>
         orders.map((order) =>
@@ -78,26 +55,53 @@ export default function OrdersTable({
         )
       );
 
-      toast.success("Estado actualizado");
-    } catch {
-      toast.error("Error al actualizar");
+      toast.success("Estado del pedido actualizado");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+      toast.error(errorMessage);
     } finally {
-      setIsUpdating(null);
+      setIsUpdatingOrder(null);
     }
   }, []);
 
+  const handlePaymentStatusUpdate = async (orderId: string, newStatus: PaymentStatus) => {
+    setIsUpdatingPayment(orderId);
+    try {
+      console.log("Updating payment status for order:", orderId, "to:", newStatus);
 
-  const StatusBadge = ({ status }: { status: OrderStatus }) => {
-    const config = OrderStatusConfig[status];
-    const Icon = config.icon;
+      const response = await fetch(`/api/admin/orders/${orderId}/payments`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-    return (
-      <span
-        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.style}`}>
-        {Icon && <Icon className="h-4 w-4" />}
-        {config.label}
-      </span>
-    );
+      console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al actualizar el pago");
+      }
+
+      setOrders((orders) =>
+        orders.map((order) =>
+          order.id === orderId
+            ? {
+              ...order,
+              payments: order.payments.map((p) => ({
+                ...p,
+                status: newStatus as PaymentStatus,
+              })),
+            }
+            : order
+        )
+      );
+
+      toast.success("Estado del pago actualizado");
+    } catch (error) {
+      console.error("Error updating payment:", error);
+    } finally {
+      setIsUpdatingPayment(null);
+    }
   };
 
   return (
@@ -117,20 +121,15 @@ export default function OrdersTable({
               <th className="text-left p-4">Total</th>
               <th className="text-left p-4">Estado</th>
               <th className="text-left p-4">Pago</th>
-              <th className="text-left p-4">Tracking</th>
+              <th className="text-left p-4">Recibos</th>
               <th className="text-left p-4">Fecha</th>
-              <th className="text-right p-4">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.map((order) => {
-              const paymentStatus: PaymentStatus = order.payments?.some((p) => p.status === PaymentStatus.REJECTED)
-                ? PaymentStatus.REJECTED
-                : order.payments?.some((p) => p.status === PaymentStatus.PARTIALLY_PAID)
-                  ? PaymentStatus.PARTIALLY_PAID
-                  : order.payments?.every((p) => p.status === PaymentStatus.COMPLETED)
-                    ? PaymentStatus.COMPLETED
-                    : PaymentStatus.PENDING;
+              const paymentStatus = order.payments?.length
+                ? order.payments[0].status
+                : "PENDING";
 
               return (
                 <tr key={order.id} className="border-b border-border hover:bg-muted/50">
@@ -147,44 +146,58 @@ export default function OrdersTable({
                   </td>
                   <td className="p-4">${order.totalAmount.toFixed(2)}</td>
                   <td className="p-4">
-                    <StatusBadge status={order.status} />
-                  </td>
-                  <td className="p-4">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${paymentStatus === "COMPLETED"
-                        ? "bg-green-100 text-green-800"
-                        : paymentStatus === "PARTIALLY_PAID"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : paymentStatus === "REJECTED"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
+                    <Select
+                      value={order.status}
+                      onValueChange={(newStatus) => handleOrderStatusUpdate(order.id, newStatus as OrderStatus)}
+                      disabled={isUpdatingOrder === order.id}
                     >
-                      {paymentStatus}
-                    </span>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(OrderStatus).map(([value]) => (
+                          <SelectItem key={value} value={value}>
+                            {value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </td>
                   <td className="p-4">
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    <Select
+                      value={order.payments[0]?.status || "PENDING"}
+                      onValueChange={(newStatus) => handlePaymentStatusUpdate(order.id, newStatus as PaymentStatus)}
+                      disabled={isUpdatingPayment === order.id}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PENDING">Pendiente</SelectItem>
+                        <SelectItem value="PARTIALLY_PAID">Pago Parcial</SelectItem>
+                        <SelectItem value="COMPLETED">Completado</SelectItem>
+                        <SelectItem value="REJECTED">Rechazado</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </td>
-                  <td className="p-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <select
-                        className="p-2 border border-border rounded-md bg-background"
-                        value={order.status}
-                        onChange={(e) =>
-                          handleStatusUpdate(order.id, e.target.value as OrderStatus)
-                        }
-                        disabled={isUpdating === order.id}
-                      >
-                        {Object.entries(OrderStatusConfig).map(([value, { label }]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                      {isUpdating === order.id && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
-                    </div>
+                  <td className="p-4">
+                    {order.payments?.map((payment, index) =>
+                      payment.receiptURL ? (
+                        <Link
+                          key={index}
+                          href={`/api/admin/orders/${order.id}/payments`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline block"
+                        >
+                          Recibo {index + 1}
+                        </Link>
+                      ) : (
+                        <span key={index} className="text-gray-500">Sin recibo</span>
+                      )
+                    )}
                   </td>
+                  <td className="p-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                 </tr>
               );
             })}

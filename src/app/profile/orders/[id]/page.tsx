@@ -12,10 +12,11 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { FileText } from "lucide-react";
 
 interface OrderDetail {
   id: string;
-  total: number;
+  totalAmount: number;
   status: string;
   createdAt: string;
   items: Array<{
@@ -28,15 +29,13 @@ interface OrderDetail {
     quantity: number;
     price: number;
   }>;
-  payment: {
+  payments: Array<{
     id: string;
     status: string;
-    payment_id: string | null;
-    preference_id: string | null;
-    merchant_order_id: string | null;
-    amount: number;
+    amountPaid: number;
+    receiptURL: string | null;
     createdAt: string;
-  } | null;
+  }>;
 }
 
 export default function OrderDetailPage() {
@@ -45,6 +44,7 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [signedReceipts, setSignedReceipts] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     async function fetchOrderDetail() {
@@ -66,6 +66,34 @@ export default function OrderDetailPage() {
       fetchOrderDetail();
     }
   }, [params.id]);
+
+  // Obtener los Signed URLs de los recibos
+  useEffect(() => {
+    async function fetchSignedUrls() {
+      if (!order?.payments) return;
+      const urls: { [key: string]: string } = {};
+
+      for (const payment of order.payments) {
+        if (payment.receiptURL) {
+          try {
+            const res = await fetch(`/api/profile/orders/${params.id}/receipt`);
+            if (res.ok) {
+              const data = await res.json();
+              urls[payment.id] = data.url;
+            }
+          } catch (err) {
+            console.error(`Error al obtener el recibo ${payment.id}`, err);
+          }
+        }
+      }
+      setSignedReceipts(urls);
+    }
+
+    if (order) {
+      fetchSignedUrls();
+    }
+  }, [order]);
+
 
   if (isLoading) {
     return (
@@ -133,15 +161,7 @@ export default function OrderDetailPage() {
                 <Package className="h-5 w-5 text-gray-500" />
                 <div>
                   <p className="text-sm text-gray-500">Estado</p>
-                  <p
-                    className={`font-medium ${
-                      order.status === "COMPLETED"
-                        ? "text-green-600"
-                        : order.status === "CANCELLED"
-                        ? "text-red-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
+                  <p className={`font-medium ${order.status === "COMPLETED" ? "text-green-600" : order.status === "CANCELLED" ? "text-red-600" : "text-yellow-600"}`}>
                     {order.status}
                   </p>
                 </div>
@@ -151,7 +171,7 @@ export default function OrderDetailPage() {
                 <CreditCard className="h-5 w-5 text-gray-500" />
                 <div>
                   <p className="text-sm text-gray-500">Total</p>
-                  <p className="font-medium">${order.total.toFixed(2)}</p>
+                  <p className="font-medium">${order.totalAmount.toFixed(2)}</p>
                 </div>
               </div>
             </div>
@@ -160,30 +180,17 @@ export default function OrderDetailPage() {
               <h2 className="font-semibold mb-4">Productos</h2>
               <div className="space-y-4">
                 {order.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={item.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="relative w-16 h-16">
-                        <Image
-                          src={item.product.image}
-                          alt={item.product.name}
-                          fill
-                          sizes="(max-width: 768px) 100px, 200px"
-                          className="object-cover rounded"
-                        />
+                        <Image src={item.product.image} alt={item.product.name} fill sizes="(max-width: 768px) 100px, 200px" className="object-cover rounded" />
                       </div>
                       <div>
                         <p className="font-medium">{item.product.name}</p>
-                        <p className="text-sm text-gray-500">
-                          Cantidad: {item.quantity}
-                        </p>
+                        <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
                       </div>
                     </div>
-                    <p className="font-medium">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </p>
+                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -195,58 +202,18 @@ export default function OrderDetailPage() {
         <div>
           <Card className="p-6">
             <h2 className="font-semibold mb-4">Información del Pago</h2>
-            {order.payment ? (
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">Estado del pago</p>
-                  <p
-                    className={`font-medium ${
-                      order.payment.status === "APPROVED"
-                        ? "text-green-600"
-                        : order.payment.status === "REJECTED"
-                        ? "text-red-600"
-                        : "text-yellow-600"
-                    }`}
-                  >
-                    {order.payment.status}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-gray-500">Monto</p>
-                  <p className="font-medium">
-                    ${order.payment.amount.toFixed(2)}
-                  </p>
-                </div>
-
-                {order.payment.payment_id && (
-                  <div>
-                    <p className="text-sm text-gray-500">ID de Pago</p>
-                    <p className="font-medium">{order.payment.payment_id}</p>
-                  </div>
+            {order.payments.map((payment) => (
+              <div key={payment.id} className="space-y-4 border-b pb-4">
+                <p className="text-sm text-gray-500">Estado del pago: <span className="font-medium">{payment.status}</span></p>
+                <p className="text-sm text-gray-500">Monto: <span className="font-medium">${payment.amountPaid.toFixed(2)}</span></p>
+                {signedReceipts[payment.id] && (
+                  <Link href={signedReceipts[payment.id]} target="_blank" className="text-primary flex items-center gap-2 hover:underline">
+                    <FileText className="h-5 w-5" />
+                    Ver comprobante
+                  </Link>
                 )}
-
-                {order.payment.merchant_order_id && (
-                  <div>
-                    <p className="text-sm text-gray-500">ID de Orden</p>
-                    <p className="font-medium">
-                      {order.payment.merchant_order_id}
-                    </p>
-                  </div>
-                )}
-
-                <div>
-                  <p className="text-sm text-gray-500">Fecha de pago</p>
-                  <p className="font-medium">
-                    {new Date(order.payment.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
               </div>
-            ) : (
-              <p className="text-gray-500">
-                No hay información de pago disponible
-              </p>
-            )}
+            ))}
           </Card>
         </div>
       </div>

@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useCart } from '@/contexts/CartContext';
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { useSession } from 'next-auth/react';
-import { Loader2 } from 'lucide-react';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/contexts/CartContext";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 
 export default function OrderForm() {
   const { data: session } = useSession();
   const [address, setAddress] = useState("");
   const [billType, setBillType] = useState("A");
   const [file, setFile] = useState<File | null>(null);
+  const [amountPaid, setAmountPaid] = useState<string>(""); // Nuevo campo
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { clearCart } = useCart();
@@ -29,28 +36,30 @@ export default function OrderForm() {
         setFile(file);
       }
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address || !file || !session?.user?.id) {
-      setError("All fields are required");
+
+    if (!address || !file || !amountPaid || !session?.user?.id) {
+      setError("Todos los campos son obligatorios");
       return;
     }
 
-    if (!session?.user?.id) {
-      setError("Debes iniciar sesión para realizar un pedido.");
+    if (isNaN(parseFloat(amountPaid)) || parseFloat(amountPaid) <= 0) {
+      setError("Ingrese un monto válido");
       return;
     }
 
     setIsSubmitting(true);
 
-    //Crear FormData y subir archivo
+    // Crear FormData y subir archivo
     const formData = new FormData();
     formData.append("file", file);
     formData.append("userId", session.user.id.toString());
     formData.append("address", address);
     formData.append("billType", billType);
+    formData.append("amountPaid", amountPaid); // Nuevo campo
 
     try {
       const res = await fetch("/api/upload", {
@@ -60,82 +69,87 @@ export default function OrderForm() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Error uploading file");
+        throw new Error(data.error || "Error al subir el archivo");
       }
 
       clearCart();
       router.push("/cart/order/confirmation");
     } catch (error) {
-      setError("Error uploading file");
+      setError("Error al subir el archivo");
       console.error("Upload error:", error);
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <div className="flex justify-center items-center ">
-      <div className="shadow-custom rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Realizar Pedido</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Dirección de envío */}
-          <div>
-            <label className="block font-medium mb-1">Dirección de envío:</label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-              disabled={isSubmitting}
-              className="bg-transparent w-full p-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Tipo de facturación */}
-          <div>
-            <Select value={billType} onValueChange={setBillType}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Seleccione un tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="A">Factura A</SelectItem>
-                <SelectItem value="B">Factura B</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Archivo de transferencia */}
-          <div>
-            <label className="block font-medium mb-1">Comprobante de Transferencia:</label>
-            <input
-              type="file"
-              accept=".pdf,.jpeg,.jpg,.png"
-              onChange={handleFileChange}
-              required
-              disabled={isSubmitting}
-              className="w-full p-2 border border-border rounded-lg file:bg-secondary file:text-foreground file:py-2 file:px-4 file:rounded-lg file:border-none"
-            />
-            {file && <p className="text-sm text-gray-600 mt-1">Archivo seleccionado: {file.name}</p>}
-          </div>
-
-          {/* Botón de envío */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-secondary py-2 rounded-lg font-semibold hover:bg-border transition"
-          >
-            {isSubmitting ? (
-              <div className='flex items-center justify-center gap-2'>
-                <Loader2 className="animate-spin h-5 w-5" /> Enviando...
-              </div>
-            ) : (
-              "Solicitar Pedido"
-            )}
-          </button>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        </form>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Dirección de Envío
+        </label>
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
       </div>
-    </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Tipo de Facturación
+        </label>
+        <Select onValueChange={setBillType} defaultValue={billType}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecciona un tipo de facturación" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="A">Factura A</SelectItem>
+            <SelectItem value="B">Factura B</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Monto Pagado
+        </label>
+        <input
+          type="number"
+          value={amountPaid}
+          onChange={(e) => setAmountPaid(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          step="0.01"
+          min="0"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Comprobante de Pago
+        </label>
+        <input
+          type="file"
+          accept="application/pdf,image/png,image/jpeg"
+          onChange={handleFileChange}
+          className="mt-1 block w-full"
+        />
+      </div>
+
+      {error && <p className="text-red-600 text-sm">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md flex items-center justify-center"
+      >
+        {isSubmitting ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          "Enviar Pedido"
+        )}
+      </button>
+    </form>
   );
 }

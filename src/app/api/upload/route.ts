@@ -1,16 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3 } from "@/lib/s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
-import { extname } from "path";
-
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  }
-});
+import { extname, parse } from "path";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,9 +12,10 @@ export async function POST(request: NextRequest) {
     const userId = formData.get("userId") as string;
     const address = formData.get("address") as string;
     const billType = formData.get("billType") as string;
+    const amountPaid = parseFloat(formData.get("amountPaid") as string);
 
-    if (!file || !userId || !address || !billType) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    if (!file || !userId || !address || !billType || isNaN(amountPaid) || amountPaid <= 0) {
+      return NextResponse.json({ error: "Datos invalidos" }, { status: 400 });
     }
 
     //Generar nombre unico para el archivo
@@ -41,7 +35,7 @@ export async function POST(request: NextRequest) {
       ContentType: file.type
     }));
 
-    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    const fileUrl = key;
 
     const cartItems = await prisma.cartItem.findMany({
       where: { userId },
@@ -52,31 +46,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No items in cart" }, { status: 400 });
     }
 
-    /*
-    const total = cartItems.reduce((acc, item) => acc + item.product.price, 0);
+    const totalAmount = cartItems.reduce((acc, item) => acc + (item.product.price ?? 0), 0);
 
     const order = await prisma.order.create({
       data: {
         userId,
-        totalAmount: total,
+        totalAmount,
         status: "PENDING",
-        notes: `Factura: ${billType} | Dirección: ${address} | Comprobante: ${fileUrl}`,
+        notes: `Factura: ${billType} | Dirección: ${address}`,
         items: {
           create: cartItems.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
             price: item.product.price
           }))
+        },
+        payments: {
+          create: {
+            amountPaid,
+            status: amountPaid >= totalAmount ? "COMPLETED" : "PARTIALLY_PAID",
+            receiptURL: fileUrl
+          }
         }
-      }
+      },
+      include: {
+        payments: true,
+      },
     });
-    */
 
+    //LimpiarCarrito
     await prisma.cartItem.deleteMany({
       where: { userId }
     });
 
-    return NextResponse.json({ fileUrl });
+    return NextResponse.json({ orderId: order.id, fileUrl });
   } catch (error) {
     console.error("Upload error", error);
     return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
