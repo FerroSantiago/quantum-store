@@ -92,7 +92,7 @@ export default function OrderDetailPage() {
     if (order) {
       fetchSignedUrls();
     }
-  }, [order]);
+  }, [order, params.id]);
 
 
   if (isLoading) {

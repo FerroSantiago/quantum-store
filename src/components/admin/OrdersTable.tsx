@@ -4,19 +4,8 @@ import { useCallback, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Order, OrderStatus, PaymentStatus } from "@/lib/types";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-import { Package, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-
-
-const OrderStatusConfig = {
-  PENDING: { label: "Pendiente", style: "bg-yellow-100 text-yellow-800", icon: Clock },
-  PROCESSING: { label: "Procesando", style: "bg-blue-100 text-blue-800", icon: Package },
-  SHIPPED: { label: "Enviado", style: "bg-purple-100 text-purple-800", icon: Truck },
-  DELIVERED: { label: "Entregado", style: "bg-green-100 text-green-800", icon: CheckCircle },
-  COMPLETED: { label: "Completado", style: "bg-gray-100 text-gray-800", icon: CheckCircle },
-  CANCELLED: { label: "Cancelado", style: "bg-red-100 text-red-800", icon: XCircle },
-} as const;
 
 export default function OrdersTable({ initialOrders }: { initialOrders: Order[] }) {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
@@ -67,15 +56,11 @@ export default function OrdersTable({ initialOrders }: { initialOrders: Order[] 
   const handlePaymentStatusUpdate = async (orderId: string, newStatus: PaymentStatus) => {
     setIsUpdatingPayment(orderId);
     try {
-      console.log("Updating payment status for order:", orderId, "to:", newStatus);
-
       const response = await fetch(`/api/admin/orders/${orderId}/payments`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-
-      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -127,10 +112,6 @@ export default function OrdersTable({ initialOrders }: { initialOrders: Order[] 
           </thead>
           <tbody>
             {filteredOrders.map((order) => {
-              const paymentStatus = order.payments?.length
-                ? order.payments[0].status
-                : "PENDING";
-
               return (
                 <tr key={order.id} className="border-b border-border hover:bg-muted/50">
                   <td className="p-4 font-medium">

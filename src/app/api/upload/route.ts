@@ -3,7 +3,7 @@ import { s3 } from "@/lib/s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
-import { extname, parse } from "path";
+import { extname } from "path";
 
 export async function POST(request: NextRequest) {
   try {
